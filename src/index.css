@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@400;700&display=swap");
+
+@import "tailwindcss";
+@plugin "daisyui";
+body {
+  font-family: "Open Sans", sans-serif;
+  @apply bg-gray-100 h-full;
+}
+/* styles.css */
+.my-button {
+  @apply px-4 py-2 rounded-md text-gray-800 hover:scale-105 hover:underline hover:duration-500 hover:bg-indigo-200 list-disc w-36;
+}
+.delete-button {
+  @apply bg-red-500 rounded text-white cursor-pointer hover:scale-105 duration-300 p-0.5;
+}
+
+.edit-button {
+  @apply bg-sky-500 text-white cursor-pointer rounded hover:scale-105 duration-300 p-0.5;
+}
+
+.view-button {
+  @apply bg-green-500 rounded text-white cursor-pointer hover:scale-105 duration-300 p-0.5;
+}
+.withdraw-button {
+  @apply p-2 text-left flex items-center text-red-500 bg-red-100 max-w-28 gap-1 text-xs h-7 mt-1.5 rounded hover:cursor-pointer hover:opacity-95;
+}
+.reason-button {
+  @apply p-2 text-left flex gap-1 items-center bg-teal-100 text-teal-600 text-xs max-w-28 h-7 px-2 mt-1.5 rounded cursor-pointer hover:opacity-95;
+}
+.active-button {
+  @apply flex items-center bg-green-100 text-green-700 max-w-28 h-7 px-2 pr-3 mt-1.5 rounded cursor-pointer text-xs hover:opacity-95;
+}
