@@ -269,7 +269,7 @@ function App() {
             }
           />
           <Route
-            path="/processReports"
+            path="/taskReports"
             element={
               <PrivateLayout>
                 <ProcessReports />

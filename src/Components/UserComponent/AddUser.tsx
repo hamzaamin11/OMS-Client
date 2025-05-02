@@ -1,12 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+
 import { InputField } from "../InputFields/InputField";
+
 import { Title } from "../Title";
+
 import { OptionField } from "../InputFields/OptionField";
+
 import { AddButton } from "../CustomButtons/AddButton";
+
 import { CancelBtn } from "../CustomButtons/CancelBtn";
+
 import axios from "axios";
+
 import { BASE_URL } from "../../Content/URL";
+
 import { useAppSelector } from "../../redux/Hooks";
+
 import { toast } from "react-toastify";
 
 export interface IAddUserValues {
@@ -18,6 +27,8 @@ export interface IAddUserValues {
   address: string;
   date: string;
   role: string;
+  image: string;
+  password: string;
 }
 
 export interface IAddUserProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -40,7 +51,9 @@ const initialState: IAddUserValues = {
   address: "",
   date: currentDate,
   role: "",
+  image: "",
   userId: "",
+  password: "",
 };
 
 const optionData = [
@@ -74,16 +87,13 @@ export const AddUser = ({
 
   const [userData, setUserData] = useState(initialState);
 
-  // const [image, setImage] = useState("");
-  // console.log("image", image);
-  // const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     const file = e.target.files[0];
-  //     const imageUrl = URL.createObjectURL(file);
-  //     console.log(imageUrl);
-  //     // setImage(imageUrl);
-  //   }
-  // };
+  const [image, setImage] = useState<File | null>(null);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImage(e.target.files[0]);
+    }
+  };
   // const allData = { ...userData, image };
   // console.log("all Data =>", allData);
   console.log({ userData, initialState }, "initialValues");
@@ -147,16 +157,36 @@ export const AddUser = ({
     }
   };
 
+  // contact: "",
+  // cnic: "",
+  // address: "",
+  // date: currentDate,
+  // role: "",
+  // userId: "",
+
   const handleAddUser = async () => {
-    console.log("Form submitted!", userData);
+    const data = new FormData();
+
+    data.append("name", userData.name);
+    data.append("email", userData.email);
+    data.append("contact", userData.contact);
+    data.append("cnic", userData.cnic);
+    data.append("address", userData.address);
+    data.append("date", userData.date);
+    data.append("role", userData.role);
+    data.append("password", userData.password);
+    if (image) {
+      data.append("image", userData.image);
+    }
+
     setLoading(true);
     try {
-      const res = await axios.post(`${BASE_URL}/admin/addUser`, {
+      const res = await axios.post(`${BASE_URL}/admin/addUser`, data, {
         headers: {
           Authorization: token,
         },
       });
-      console.log(res);
+      console.log("=>>>>>", res.data);
       setLoading(false);
       handlerGetUsers();
       setUserData(initialState);
@@ -239,6 +269,19 @@ export const AddUser = ({
               handlerChange={handlerChange}
               // inputVal={userData.confirmPassword}
             />
+
+            <div className=" flex flex-col  mt-3">
+              <label className=" text-gray-900 text-xs font-semibold">
+                Select Image*
+              </label>
+              <input
+                type="file"
+                className=" p-1 rounded bg-white text-gray-800  border border-gray-300 focus:indigo-400"
+                onChange={handleFileChange}
+                name="image"
+                accept="image/*"
+              />
+            </div>
             {/* <InputField
               labelName="Image*"
               placeHolder="Choose file"

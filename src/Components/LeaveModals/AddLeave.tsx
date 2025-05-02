@@ -38,7 +38,7 @@ export const AddLeave = ({ setModal }: AddAttendanceProps) => {
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddLeave({ ...addLeave, [name]: value.trim() });
+    setAddLeave({ ...addLeave, [name]: value });
   };
   const { employeeName, ...leaveData } = addLeave;
 

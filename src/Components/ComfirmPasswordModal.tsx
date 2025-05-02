@@ -8,9 +8,6 @@ import { useAppSelector } from "../redux/Hooks";
 import { toast } from "react-toastify";
 
 type PasswordProps = {
-  //   setFormData: Dispatch<
-  //     SetStateAction<{ password: string; confirmPassword: string }>
-  //   >; // Correct type
   catchId: number | null;
   setModal: () => void;
 };

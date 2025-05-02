@@ -18,7 +18,7 @@ export const AddProjectCategory = ({ setModal }: AddAttendanceProps) => {
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddCategory({ ...addCategory, [name]: value.trim() });
+    setAddCategory({ ...addCategory, [name]: value });
   };
 
   console.log("submitted", addCategory);

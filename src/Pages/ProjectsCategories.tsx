@@ -1,7 +1,5 @@
 import { ShowDataNumber } from "../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../Components/Pagination/Pagination";
-import { AiTwotoneEdit } from "react-icons/ai";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { TableInputField } from "../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../Components/TableLayoutComponents/TableTitle";

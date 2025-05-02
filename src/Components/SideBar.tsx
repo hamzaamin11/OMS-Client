@@ -2,7 +2,7 @@ import { AccordionItem } from "./Accordion/AccordionItem";
 import { SideBarButton } from "./SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUser, FaUserFriends } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -33,10 +33,11 @@ type TActivButton =
   | "Accounts"
   | "Reports";
 export const SideBar = ({ isOpen }: SideBarProps) => {
-  
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
 
   const navigate = useNavigate();
+
+  const { pathname } = useLocation();
 
   console.log(activeBtns);
 
@@ -92,10 +93,20 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "People" && (
           <AccordionItem isOpen={isOpen}>
             <div className="flex flex-col items-start justify-start">
-              <Link className="my-button" to={"/users"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/users" && "bg-indigo-200"
+                } `}
+                to={"/users"}
+              >
                 User
               </Link>
-              <Link className="my-button" to={"/customers"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/customers" && "bg-indigo-200"
+                } `}
+                to={"/customers"}
+              >
                 Customer
               </Link>
             </div>
@@ -115,16 +126,36 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Attendance" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/markAttendance"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/markAttendance" && "bg-indigo-200"
+                } `}
+                to={"/markAttendance"}
+              >
                 Mark Attendance
               </Link>
-              <Link className="my-button" to={"/usersAttendance"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/usersAttendance" && "bg-indigo-200"
+                } `}
+                to={"/usersAttendance"}
+              >
                 User Attendance
               </Link>
-              <Link className="my-button" to={"/leaveRequests"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/leaveRequests" && "bg-indigo-200"
+                } `}
+                to={"/leaveRequests"}
+              >
                 Leave Request
               </Link>
-              <Link className="my-button" to={"/holidays"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/holidays" && "bg-indigo-200"
+                } `}
+                to={"/holidays"}
+              >
                 Configure Holidays
               </Link>
             </ul>
@@ -144,7 +175,12 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Employee" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/employeeWithdraw"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/employeeWithdraw" && "bg-indigo-200"
+                } `}
+                to={"/employeeWithdraw"}
+              >
                 Employee Withdraw
               </Link>
             </ul>
@@ -164,13 +200,28 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "AssignProjects" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/projects"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/projects" && "bg-indigo-200"
+                } `}
+                to={"/projects"}
+              >
                 Projects
               </Link>
-              <Link className="my-button" to={"/projectCatogries"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/projectCatogries" && "bg-indigo-200"
+                } `}
+                to={"/projectCatogries"}
+              >
                 Project Categories
               </Link>
-              <Link className="my-button" to={"/assignprojects"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/assignprojects" && "bg-indigo-200"
+                } `}
+                to={"/assignprojects"}
+              >
                 Assign Project
               </Link>
             </ul>
@@ -190,10 +241,20 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Todo" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/todo"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/todo" && "bg-indigo-200"
+                } `}
+                to={"/todo"}
+              >
                 Todo
               </Link>
-              <Link className="my-button" to={"/progress"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/progress" && "bg-indigo-200"
+                } `}
+                to={"/progress"}
+              >
                 Progress
               </Link>
             </ul>
@@ -213,13 +274,28 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Sale" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/sales"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/sales" && "bg-indigo-200"
+                } `}
+                to={"/sales"}
+              >
                 Sales
               </Link>
-              <Link className="my-button" to={"/quotations"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/quotations" && "bg-indigo-200"
+                } `}
+                to={"/quotations"}
+              >
                 Quotation
               </Link>
-              <Link className="my-button" to={"/payments"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/payments" && "bg-indigo-200"
+                } `}
+                to={"/payments"}
+              >
                 Payment
               </Link>
             </ul>
@@ -239,10 +315,20 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "manageExpense" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/expenses"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/expenses" && "bg-indigo-200"
+                } `}
+                to={"/expenses"}
+              >
                 Expense
               </Link>
-              <Link className="my-button" to={"/expensesCatogries"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/expensesCatogries" && "bg-indigo-200"
+                } `}
+                to={"/expensesCatogries"}
+              >
                 Expense Category
               </Link>
             </ul>
@@ -282,13 +368,28 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "monthlyAccount" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/calendar"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/calendar" && "bg-indigo-200"
+                } `}
+                to={"/calendar"}
+              >
                 Calendar
               </Link>
-              <Link className="my-button" to={"/salaryCycle"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/salaryCycle" && "bg-indigo-200"
+                } `}
+                to={"/salaryCycle"}
+              >
                 Salary Cycle
               </Link>
-              <Link className="my-button" to={"/configEmployeeSalaries"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/configEmployeeSalaries" && "bg-indigo-200"
+                } `}
+                to={"/configEmployeeSalaries"}
+              >
                 Config Employee Salaries
               </Link>
             </ul>
@@ -308,7 +409,12 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "configureTime" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/configTime"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/configTime" && "bg-indigo-200"
+                } `}
+                to={"/configTime"}
+              >
                 Config Time
               </Link>
             </ul>
@@ -328,7 +434,12 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Accounts" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link className="my-button" to={"/employeeAccount"}>
+              <Link
+                className={`my-button ${
+                  pathname === "/employeeAccount" && "bg-indigo-200"
+                } `}
+                to={"/employeeAccount"}
+              >
                 Employee Account
               </Link>
             </ul>
@@ -356,23 +467,53 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 activeBtns === "Reports"
               } && "transition-all duration-300  ease-in-out"`}
             >
-              <Link className="my-button" to={"/salesReports"}>
-                Sale Reports
+              <Link
+                className={`my-button ${
+                  pathname === "/salesReports" && "bg-indigo-200"
+                } `}
+                to={"/salesReports"}
+              >
+                Sale Report
               </Link>
-              <Link className="my-button" to={"/progressReport"}>
-                Progress Reports
+              <Link
+                className={`my-button ${
+                  pathname === "/progressReports" && "bg-indigo-200"
+                } `}
+                to={"/progressReports"}
+              >
+                Progress Report
               </Link>
-              <Link className="my-button" to={"/attendanceReports"}>
-                Attendance Reports
+              <Link
+                className={`my-button ${
+                  pathname === "/attendanceReports" && "bg-indigo-200"
+                } `}
+                to={"/attendanceReports"}
+              >
+                Attendance Report
               </Link>
-              <Link className="my-button" to={"/processReports"}>
-                Process Reports
+              <Link
+                className={`my-button ${
+                  pathname === "/taskReports" && "bg-indigo-200"
+                } `}
+                to={"/taskReports"}
+              >
+                Task Report
               </Link>
-              <Link className="my-button" to={"/paymentReports"}>
-                Payment Reports
+              <Link
+                className={`my-button ${
+                  pathname === "/paymentReports" && "bg-indigo-200"
+                } `}
+                to={"/paymentReports"}
+              >
+                Payment Report
               </Link>
-              <Link className="my-button" to={"/expenseReports"}>
-                Expense Reports
+              <Link
+                className={`my-button ${
+                  pathname === "/expenseReports" && "bg-indigo-200"
+                } `}
+                to={"/expenseReports"}
+              >
+                Expense Report
               </Link>
             </ul>
           </AccordionItem>

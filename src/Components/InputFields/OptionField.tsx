@@ -10,7 +10,6 @@ type OptionFieldProps = {
   Value: string;
   optionData: option[];
 };
-
 export const OptionField = ({
   labelName,
   handlerChange,
