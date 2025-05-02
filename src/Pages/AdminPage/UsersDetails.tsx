@@ -14,29 +14,45 @@ type UserType = {
 };
 
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
+
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 
 import { useEffect, useState } from "react";
+
 import { AddUser } from "../../Components/UserComponent/AddUser";
+
 import axios, { AxiosError } from "axios";
+
 import { BASE_URL } from "../../Content/URL";
+
 import { RiLockPasswordFill } from "react-icons/ri";
+
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 
 import { toast } from "react-toastify";
+
 import { ComfirmPasswordModal } from "../../Components/ComfirmPasswordModal";
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+
 import { Loader } from "../../Components/LoaderComponent/Loader";
+
 import { ViewUserDetailModal } from "../../Components/ViewUserDetailModal";
+
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+
 import { Pagination } from "../../Components/Pagination/Pagination";
+
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 
 const numbers = [10, 25, 50, 100];
@@ -268,6 +284,7 @@ export const UsersDetails = () => {
                       "sv-SE"
                     ) ?? "",
                   email: editUser?.email ?? "",
+                  image: editUser?.image ?? "",
 
                   role: editUser?.role ?? "",
                 },
