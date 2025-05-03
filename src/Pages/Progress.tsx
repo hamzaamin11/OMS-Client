@@ -1,15 +1,26 @@
 import { ShowDataNumber } from "../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../Components/Pagination/Pagination";
-import { AiTwotoneEdit } from "react-icons/ai";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { TableInputField } from "../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
+import { useState } from "react";
+import { AddProgress } from "../Components/ProgressModal/AddProgress";
+import { EditProgress } from "../Components/ProgressModal/EditProgress";
+import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
 
 const numbers = [10, 25, 50, 100];
+
+type PROGRESST = "ADD" | "EDIT" | "DELETE" | "";
+
 export const Progress = () => {
+  const [isOpenModal, setIsOpenModal] = useState<PROGRESST>("");
+
+  const handleToggleViewModal = (active: PROGRESST) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Progress" activeFile="All Progress list" />
@@ -23,7 +34,7 @@ export const Progress = () => {
           </span>
           <CustomButton
             label="Add Progress"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -56,8 +67,10 @@ export const Progress = () => {
             <span className=" p-2 text-left ">frontend developer</span>
             <span className=" p-2 text-left ">22/2/2025</span>
             <span className="p-2 flex items-center  gap-2">
-              <EditButton />
-              <DeleteButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -67,6 +80,22 @@ export const Progress = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "ADD" && (
+        <AddProgress setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "EDIT" && (
+        <EditProgress setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleToggleViewModal("")}
+        />
+      )}
     </div>
   );
 };

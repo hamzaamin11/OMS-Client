@@ -1,15 +1,25 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { AiTwotoneEdit } from "react-icons/ai";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { useState } from "react";
+import { AddTodo } from "../../Components/TodoModals/AddTodo";
+import { UpdateTodo } from "../../Components/TodoModals/UpdateTodo";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 const numbers = [10, 25, 50, 100];
+type TODOT = "Add" | "Edit" | "Delete" | "";
+
 export const Todo = () => {
+  const [isOpenModal, setIsOpenModal] = useState<TODOT>("");
+
+  const handleToggleViewModal = (active: TODOT) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Todo's" activeFile="All Todo,s list" />
@@ -23,7 +33,7 @@ export const Todo = () => {
           </span>
           <CustomButton
             label="Add Todo"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("Add")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -56,9 +66,11 @@ export const Todo = () => {
             <span className=" p-2 text-left ">frontend developer</span>
             <span className=" p-2 text-left ">22/2/2025</span>
             <span className="p-2 flex items-center  gap-2">
-              <EditButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("Edit")} />
 
-              <DeleteButton />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("Delete")}
+              />
             </span>
           </div>
         </div>
@@ -68,6 +80,22 @@ export const Todo = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "Add" && (
+        <AddTodo setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "Edit" && (
+        <UpdateTodo setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "Delete" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("Delete")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleToggleViewModal("")}
+        />
+      )}
     </div>
   );
 };

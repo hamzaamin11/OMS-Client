@@ -8,7 +8,6 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { useState } from "react";
 import { AddAssignProject } from "../../Components/AssignProjectModal/AddAssignProject";
 import { EditAssignProject } from "../../Components/AssignProjectModal/EditAssignProject";
-import { ComfirmPasswordModal } from "../../Components/ComfirmPasswordModal";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 const numbers = [10, 25, 50, 100];
