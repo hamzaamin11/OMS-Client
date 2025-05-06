@@ -8,10 +8,20 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { IoIosClose } from "react-icons/io";
+import { useState } from "react";
+import { AddSalaryCycle } from "../../Components/SalaryCycleModal/AddSalaryCycle";
 
 const numbers = [10, 25, 50, 10];
 
+type SALARYCYCLET = "ADD" | "EDIT" | "DELETE" | "";
+
 export const SalaryCycle = () => {
+  const [isOpenModal, setIsOpenModal] = useState<SALARYCYCLET>("");
+
+  const handleToggleViewModal = (active: SALARYCYCLET) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Salary Cycle List" activeFile="All Todo,s list" />
@@ -26,7 +36,7 @@ export const SalaryCycle = () => {
           </span>
           <CustomButton
             label="Run Cycle"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -66,6 +76,9 @@ export const SalaryCycle = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+      {isOpenModal === "ADD" && (
+        <AddSalaryCycle setModal={() => handleToggleViewModal("")} />
+      )}
     </div>
   );
 };

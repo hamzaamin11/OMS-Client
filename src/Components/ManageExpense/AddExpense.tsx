@@ -13,6 +13,7 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
+import { InputField } from "../InputFields/InputField";
 
 type AddAttendanceProps = {
   setModal: () => void;
@@ -20,23 +21,28 @@ type AddAttendanceProps = {
 
 const initialState = {
   employeeName: "",
-  projectName: "",
+  expenseName: "",
+  account: "",
+  addBy: "",
+  date: "",
 };
-export const EditAssignProject = ({ setModal }: AddAttendanceProps) => {
+export const AddExpense = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProject, setAddProject] = useState(initialState);
+  const [addExpense, setAddExpense] = useState(initialState);
 
   const [allUsers, setAllUsers] = useState([]);
 
   const token = currentUser?.token;
 
-  const handlerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
     e.preventDefault();
 
     const { name, value } = e.target;
 
-    setAddProject({ ...addProject, [name]: value });
+    setAddExpense({ ...addExpense, [name]: value });
   };
 
   const getAllUsers = async () => {
@@ -62,28 +68,48 @@ export const EditAssignProject = ({ setModal }: AddAttendanceProps) => {
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Assign Project</Title>
+            <Title setModal={() => setModal()}>Add Expense</Title>
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
                 labelName="Employees*"
                 name="employeeName"
-                value={addProject.employeeName}
+                value={addExpense.employeeName}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
 
-              <UserSelect
-                labelName="Project*"
-                name="employeeName"
-                value={addProject.projectName}
+              <InputField
+                labelName="Expense Category*"
+                name="expenseExpense"
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                inputVal={addExpense.expenseName}
+              />
+
+              <InputField
+                labelName="Account*"
+                name="account"
+                handlerChange={handlerChange}
+                inputVal={addExpense.account}
+              />
+
+              <InputField
+                labelName="Add By*"
+                name="addBy"
+                handlerChange={handlerChange}
+                inputVal={addExpense.addBy}
+              />
+
+              <InputField
+                labelName="Date*"
+                name="date"
+                handlerChange={handlerChange}
+                inputVal={addExpense.date}
               />
             </div>
 
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">
               <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Project"} />
+              <AddButton label={"Save Expense"} />
             </div>
           </form>
         </div>

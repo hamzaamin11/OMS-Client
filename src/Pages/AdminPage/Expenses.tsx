@@ -6,9 +6,23 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { useState } from "react";
+import { AddExpense } from "../../Components/ManageExpense/AddExpense";
+import { EditExpense } from "../../Components/ManageExpense/EditExpense";
+import { ViewExpense } from "../../Components/ManageExpense/ViewExpense";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 const numbers = [10, 25, 50, 10];
+
+type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
+
 export const Expenses = () => {
+  const [isOpenModal, setIsOpenModal] = useState<EXPENSET>("");
+
+  const handleToggleViewModal = (active: EXPENSET) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Expenses" activeFile="Expenses list" />
@@ -22,7 +36,7 @@ export const Expenses = () => {
           </span>
           <CustomButton
             label="Add Expense"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -57,10 +71,12 @@ export const Expenses = () => {
             <span className=" p-2 text-left ">frontend developer</span>
             <span className=" p-2 text-left ">22/2/2025</span>
             <span className="p-2 flex items-center  gap-1">
-              <EditButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 
-              <ViewButton />
-              <DeleteButton />
+              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -70,6 +86,24 @@ export const Expenses = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "ADD" && (
+        <AddExpense setModal={() => handleToggleViewModal("")} />
+      )}
+      {isOpenModal === "EDIT" && (
+        <EditExpense setModal={() => handleToggleViewModal("")} />
+      )}
+      {isOpenModal === "VIEW" && (
+        <ViewExpense setIsOpenModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          onClose={() => handleToggleViewModal("")}
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onConfirm={() => handleToggleViewModal("")}
+        />
+      )}
     </div>
   );
 };

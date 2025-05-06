@@ -19,24 +19,26 @@ type AddAttendanceProps = {
 };
 
 const initialState = {
-  employeeName: "",
-  projectName: "",
+  customers: "",
+  projects: "",
 };
-export const EditAssignProject = ({ setModal }: AddAttendanceProps) => {
+export const EditSale = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProject, setAddProject] = useState(initialState);
+  const [addProgress, setAddProgress] = useState(initialState);
 
   const [allUsers, setAllUsers] = useState([]);
 
   const token = currentUser?.token;
 
-  const handlerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
     e.preventDefault();
 
     const { name, value } = e.target;
 
-    setAddProject({ ...addProject, [name]: value });
+    setAddProgress({ ...addProgress, [name]: value });
   };
 
   const getAllUsers = async () => {
@@ -62,20 +64,20 @@ export const EditAssignProject = ({ setModal }: AddAttendanceProps) => {
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Assign Project</Title>
+            <Title setModal={() => setModal()}>Update Sale</Title>
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
-                labelName="Employees*"
-                name="employeeName"
-                value={addProject.employeeName}
+                labelName="Customers*"
+                name="customers"
+                value={addProgress.customers}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
 
               <UserSelect
-                labelName="Project*"
-                name="employeeName"
-                value={addProject.projectName}
+                labelName="Projects*"
+                name="projects"
+                value={addProgress.projects}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
@@ -83,7 +85,7 @@ export const EditAssignProject = ({ setModal }: AddAttendanceProps) => {
 
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">
               <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Project"} />
+              <AddButton label={"Update Sale"} />
             </div>
           </form>
         </div>

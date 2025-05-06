@@ -5,12 +5,26 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { useState } from "react";
+import { AddCategory } from "../../Components/ExpenseCategoryModal/AddCategory";
+import { EditCategory } from "../../Components/ProjectCategoryModal/EditCategory";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 const numbers = [10, 25, 50, 10];
+type EXPENSECATEGORYT = "ADD" | "EDIT" | "DELETE" | "";
+
 export const ExpensesCatogries = () => {
+  const [isOpenModal, setIsOpenModal] = useState<EXPENSECATEGORYT>("");
+
+  const handleToggleViewModal = (active: EXPENSECATEGORYT) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Expense Category List" activeFile="Expense Category list" />
+      <TableTitle
+        tileName="Expense Category List"
+        activeFile="Expense Category list"
+      />
       <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
@@ -21,7 +35,7 @@ export const ExpensesCatogries = () => {
           </span>
           <CustomButton
             label="Add Expense Category"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -48,9 +62,11 @@ export const ExpensesCatogries = () => {
             <span className=" p-2 text-left ">1</span>
             <span className=" p-2 text-left   ">react js</span>
             <span className="p-2 flex items-center  gap-1">
-              <EditButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 
-              <DeleteButton />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -60,6 +76,22 @@ export const ExpensesCatogries = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "ADD" && (
+        <AddCategory setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "EDIT" && (
+        <EditCategory setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleToggleViewModal("")}
+        />
+      )}
     </div>
   );
 };
