@@ -6,11 +6,23 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { useState } from "react";
+import { AddConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/AddConfigEmpSalary";
+import { EditConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/EditConfigEmpSalary";
+import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewConfigEmpSalary";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 const numbers = [10, 25, 50, 10];
 
+type CONFIGT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
+
 export const ConfigEmpSalary = () => {
-  
+  const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
+
+  const handleToggleViewModal = (active: CONFIGT) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Salaries" activeFile="Salaries list" />
@@ -24,7 +36,7 @@ export const ConfigEmpSalary = () => {
           </span>
           <CustomButton
             label="Add Salaries"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -57,9 +69,11 @@ export const ConfigEmpSalary = () => {
             <span className=" p-2 text-left   ">3000000</span>
             <span className=" p-2 text-left   ">10-4-2025</span>
             <span className="p-2 flex items-center  gap-1">
-              <EditButton />
-              <ViewButton />
-              <DeleteButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -69,6 +83,26 @@ export const ConfigEmpSalary = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "ADD" && (
+        <AddConfigEmpSalary setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "EDIT" && (
+        <EditConfigEmpSalary setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "VIEW" && (
+        <ViewConfigEmpSalary setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleToggleViewModal("")}
+        />
+      )}
     </div>
   );
 };

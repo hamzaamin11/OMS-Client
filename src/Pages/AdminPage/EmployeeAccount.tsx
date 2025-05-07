@@ -4,8 +4,21 @@ import { TableInputField } from "../../Components/TableLayoutComponents/TableInp
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { useState } from "react";
+import { AddEmployeePayment } from "../../Components/EmployeeAccountModal/AddEmployeePayment";
+import { AddEmployeeRefund } from "../../Components/EmployeeAccountModal/AddEmployeeRefund";
+import { ViewEmployeeAccount } from "../../Components/EmployeeAccountModal/ViewEmployeeAccount";
 const numbers = [10, 25, 50, 10];
+
+type EMPLOYEEACOUNTT = "ADDPAYMENT" | "ADDREFUND" | "VIEW" | "";
+
 export const EmployeeAccount = () => {
+  const [isOpenModal, setIsOpenModal] = useState<EMPLOYEEACOUNTT>("");
+
+  const handleToggleViewModal = (active: EMPLOYEEACOUNTT) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle
@@ -24,11 +37,11 @@ export const EmployeeAccount = () => {
           <div className="flex gap-2">
             <CustomButton
               label="Payment Withdraw"
-              // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+              handleToggle={() => handleToggleViewModal("ADDPAYMENT")}
             />
             <CustomButton
               label="Payment Refund"
-              // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+              handleToggle={() => handleToggleViewModal("ADDREFUND")}
             />
           </div>
         </div>
@@ -60,7 +73,7 @@ export const EmployeeAccount = () => {
             <span className=" p-2 text-left  ">hamzaamin10@gmail.com</span>
             <span className=" p-2 text-left   ">+923215965061</span>
             <span className="p-2 flex items-center  gap-1">
-              <ViewButton />
+              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
             </span>
           </div>
         </div>
@@ -70,6 +83,18 @@ export const EmployeeAccount = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "ADDPAYMENT" && (
+        <AddEmployeePayment setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "ADDREFUND" && (
+        <AddEmployeeRefund setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "VIEW" && (
+        <ViewEmployeeAccount setModal={() => handleToggleViewModal("")} />
+      )}
     </div>
   );
 };

@@ -5,8 +5,20 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { useState } from "react";
+import { AddConfigTime } from "../../Components/ConfigTimeModal/AddConfigTime";
+import { EditConfigTime } from "../../Components/ConfigTimeModal/EditConfigTime";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+
 const numbers = [10, 25, 50, 10];
+
+type CONFIGTIMET = "ADD" | "EDIT" | "DELETE" | "";
 export const ConfigTime = () => {
+  const [isOpenModal, setIsOpenModal] = useState<CONFIGTIMET>("");
+
+  const handleToggleViewModal = (active: CONFIGTIMET) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Configure Time" activeFile="Late List" />
@@ -21,7 +33,7 @@ export const ConfigTime = () => {
           </span>
           <CustomButton
             label="Add Config Time"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -50,8 +62,10 @@ export const ConfigTime = () => {
             <span className=" p-2 text-left   ">12:00PM</span>
             <span className=" p-2 text-left  ">Absent</span>
             <span className="p-2 flex items-center  gap-1">
-              <EditButton />
-              <DeleteButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -61,6 +75,21 @@ export const ConfigTime = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+      {isOpenModal === "ADD" && (
+        <AddConfigTime setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "EDIT" && (
+        <EditConfigTime setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleToggleViewModal("")}
+        />
+      )}
     </div>
   );
 };
