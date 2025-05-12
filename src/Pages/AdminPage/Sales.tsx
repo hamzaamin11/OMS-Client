@@ -5,22 +5,62 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddSale } from "../../Components/SaleModals/AddSale";
 import { EditSale } from "../../Components/SaleModals/EditSale";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
 type SALET = "ADD" | "EDIT" | "DELETE" | "";
 
 const numbers = [10, 25, 50, 100];
 
+type ADDSALET = {
+  id: number;
+  projectId: number;
+  projectName: string;
+  customerId: number;
+  customerName: string;
+};
+
 export const Sales = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
   const [isOpenModal, setIsOpenModal] = useState<SALET>("");
+
+  const [allSales, setAllSales] = useState<ADDSALET[] | null>(null);
+
+  const [seleteSale, setSeleteSale] = useState<ADDSALET | null>(null);
 
   const handleToggleViewModal = (active: SALET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
+  const token = currentUser?.token;
+
+  const handleGetsales = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getSales`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllSales(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickEditButtton = (data: ADDSALET) => {
+    handleToggleViewModal("EDIT");
+    setSeleteSale(data);
+  };
+
+  useEffect(() => {
+    handleGetsales();
+  }, []);
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sale" activeFile="All Sale,s list" />
@@ -52,28 +92,29 @@ export const Sales = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Date</span>
-            <span className="p-2 text-left min-w-[150px] ">Users</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock In</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock Out</span>
-            <span className="p-2 text-left min-w-[150px] ">Day</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2  min-w-[50px]">Sr</span>
+            <span className="p-2 text-left min-w-[150px] ">Project</span>
+            <span className="p-2 text-left min-w-[150px] ">Customer</span>
+            <span className="p-2 text-left min-w-[150px] ">Actions</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
-            <span className="p-2 flex items-center  gap-2">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+          {allSales?.map((sale, index) => (
+            <div
+              className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={sale.id}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{sale.projectName}</span>
+              <span className=" p-2 text-left  ">{sale.customerName}</span>
+              <span className="p-2 flex items-center  gap-2">
+                <EditButton handleUpdate={() => handleClickEditButtton(sale)} />
 
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+                <DeleteButton
+                  handleDelete={() => handleToggleViewModal("DELETE")}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -83,11 +124,17 @@ export const Sales = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddSale setModal={() => handleToggleViewModal("")} />
+        <AddSale
+          setModal={() => handleToggleViewModal("")}
+          handleGetsales={handleGetsales}
+        />
       )}
 
       {isOpenModal === "EDIT" && (
-        <EditSale setModal={() => handleToggleViewModal("")} />
+        <EditSale
+          setModal={() => handleToggleViewModal("")}
+          seleteSale={seleteSale}
+        />
       )}
 
       {isOpenModal === "DELETE" && (

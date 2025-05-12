@@ -6,30 +6,45 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
 
-import { UserSelect } from "../InputFields/UserSelect";
 
 import axios from "axios";
 
 import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
+import { OptionField } from "../InputFields/OptionField";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  handleGetsales: () => void;
 };
 
+type CustomerT = {
+  id: number;
+  customerName: string;
+};
+
+type ProjectT = {
+  id: number;
+  projectName: string;
+};
 const initialState = {
   customers: "",
   projects: "",
 };
-export const AddSale = ({ setModal }: AddAttendanceProps) => {
+export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProgress, setAddProgress] = useState(initialState);
+  const [addSale, setAddSale] = useState(initialState);
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
+
+  const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
 
   const token = currentUser?.token;
+
+  console.log("=>", addSale);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
@@ -38,27 +53,62 @@ export const AddSale = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddProgress({ ...addProgress, [name]: value });
+    setAddSale({ ...addSale, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const handleGetProjects = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/admin/getProjects`, {
         headers: {
           Authorization: token,
         },
       });
-      setAllUsers(res?.data?.users);
+      setAllProjects(res?.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlerSubmitted = async () => {};
+  const getAllCustomers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      setAllCustomers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/addSales/${addSale.customers}/${addSale.projects}`,
+        addSale,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      handleGetsales();
+      toast.success("Sale added sucessfully");
+      setModal()
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    getAllUsers();
+    handleGetProjects();
+    getAllCustomers();
   }, []);
+
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -66,20 +116,30 @@ export const AddSale = ({ setModal }: AddAttendanceProps) => {
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Sale</Title>
             <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Customers*"
+              <OptionField
+                labelName="Customer*"
                 name="customers"
-                value={addProgress.customers}
+                value={addSale.customers}
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                optionData={allCustomers?.map((customer) => ({
+                  id: customer.id,
+                  label: customer.customerName,
+                  value: customer.id,
+                }))}
+                inital="Please Select Customer"
               />
 
-              <UserSelect
+              <OptionField
                 labelName="Projects*"
                 name="projects"
-                value={addProgress.projects}
+                value={addSale.projects}
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                optionData={allProjects?.map((project) => ({
+                  id: project.id,
+                  label: project.projectName,
+                  value: project.id,
+                }))}
+                inital="Please Select Project"
               />
             </div>
 

@@ -2,6 +2,7 @@ type option = {
   name: string;
   id: number;
   loginStatus: string;
+  projectName: string;
 };
 
 type OptionFieldProps = {
@@ -9,7 +10,7 @@ type OptionFieldProps = {
   handlerChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   name: string;
   value: string;
-  optionData: option[];
+  optionData: option[] | undefined | null;
 };
 
 export const UserSelect = ({
@@ -32,7 +33,7 @@ export const UserSelect = ({
       >
         <option value={""}>Please Select User </option>
 
-        {optionData.map(
+        {optionData?.map(
           (options, index) =>
             options.loginStatus === "Y" && (
               <option value={options.id} key={index}>

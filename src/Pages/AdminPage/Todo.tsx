@@ -5,20 +5,87 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddTodo } from "../../Components/TodoModals/AddTodo";
 import { UpdateTodo } from "../../Components/TodoModals/UpdateTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
 const numbers = [10, 25, 50, 100];
+
+type ALLTODOT = {
+  id: number;
+  name: string;
+  task: string;
+  note: string;
+  startDate: string;
+  endDate: string;
+  deadline: string;
+};
 type TODOT = "Add" | "Edit" | "Delete" | "";
 
 export const Todo = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const [allTodos, setAllTodos] = useState<ALLTODOT[] | null>(null);
+
+  const [catchId, setCatchId] = useState<number>();
+
+  const [seleteTodo, setSeleteTodo] = useState<ALLTODOT | null>(null);
+
   const [isOpenModal, setIsOpenModal] = useState<TODOT>("");
+
+  const token = currentUser?.token;
 
   const handleToggleViewModal = (active: TODOT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const getAllTodos = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getTodos`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllTodos(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleClickEditButton = (seleteData: ALLTODOT) => {
+    handleToggleViewModal("Edit");
+    setSeleteTodo(seleteData);
+  };
+
+  const hanleClickDeleteButton = (id: number) => {
+    handleToggleViewModal("Delete");
+    setCatchId(id);
+  };
+
+  const handleDeleteTodo = async () => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/admin/deleteTodo/${catchId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllTodos();
+  }, []);
 
   return (
     <div className="w-full mx-2">
@@ -51,28 +118,41 @@ export const Todo = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Date</span>
-            <span className="p-2 text-left min-w-[150px] ">Users</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock In</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock Out</span>
-            <span className="p-2 text-left min-w-[150px] ">Day</span>
+          <div className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2  min-w-[50px]">Sr</span>
+            <span className="p-2 text-left min-w-[150px] ">Employee</span>
+            <span className="p-2 text-left min-w-[150px] ">Tasks</span>
+            <span className="p-2 text-left min-w-[150px] ">Start Date</span>
+            <span className="p-2 text-left min-w-[150px] ">End Date</span>
+            <span className="p-2 text-left min-w-[150px] ">Deadline</span>
             <span className="p-2 text-left min-w-[150px]">Action</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
-            <span className="p-2 flex items-center  gap-2">
-              <EditButton handleUpdate={() => handleToggleViewModal("Edit")} />
+          {allTodos?.map((todo, index) => (
+            <div
+              className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={todo.id}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{todo.name}</span>
+              <span className=" p-2 text-left  ">{todo.task}</span>
+              <span className=" p-2 text-left ">
+                {todo.startDate.slice(0, 10)}
+              </span>
+              <span className=" p-2 text-left ">
+                {todo.endDate.slice(0, 10)}
+              </span>
+              <span className=" p-2 text-left ">
+                {todo.deadline.slice(0, 10)}
+              </span>
+              <span className="p-2 flex items-center  gap-2">
+                <EditButton handleUpdate={() => handleClickEditButton(todo)} />
 
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("Delete")}
-              />
-            </span>
-          </div>
+                <DeleteButton
+                  handleDelete={() => hanleClickDeleteButton(todo.id)}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -82,18 +162,24 @@ export const Todo = () => {
       </div>
 
       {isOpenModal === "Add" && (
-        <AddTodo setModal={() => handleToggleViewModal("")} />
+        <AddTodo
+          setModal={() => handleToggleViewModal("")}
+          getAllTodos={getAllTodos}
+        />
       )}
 
       {isOpenModal === "Edit" && (
-        <UpdateTodo setModal={() => handleToggleViewModal("")} />
+        <UpdateTodo
+          setModal={() => handleToggleViewModal("")}
+          seleteTodo={seleteTodo}
+        />
       )}
 
       {isOpenModal === "Delete" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("Delete")}
           onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleToggleViewModal("")}
+          onConfirm={() => handleDeleteTodo()}
         />
       )}
     </div>

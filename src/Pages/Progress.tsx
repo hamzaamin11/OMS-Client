@@ -5,21 +5,54 @@ import { CustomButton } from "../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddProgress } from "../Components/ProgressModal/AddProgress";
 import { EditProgress } from "../Components/ProgressModal/EditProgress";
 import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../Content/URL";
+import { useAppSelector } from "../redux/Hooks";
 
 const numbers = [10, 25, 50, 100];
 
 type PROGRESST = "ADD" | "EDIT" | "DELETE" | "";
 
+type ALLPROGRESST = {
+  id: number;
+  name: string;
+  projectName: string;
+  date: string;
+};
+
 export const Progress = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const [allProgress, setAllProgress] = useState<ALLPROGRESST[] | null>(null);
+
   const [isOpenModal, setIsOpenModal] = useState<PROGRESST>("");
+
+  const token = currentUser?.token;
 
   const handleToggleViewModal = (active: PROGRESST) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const handleGetAllProgress = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getProgress`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllProgress(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllProgress();
+  }, []);
 
   return (
     <div className="w-full mx-2">
@@ -52,27 +85,35 @@ export const Progress = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Date</span>
-            <span className="p-2 text-left min-w-[150px] ">Users</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock In</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock Out</span>
-            <span className="p-2 text-left min-w-[150px] ">Day</span>
+          <div className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2  min-w-[50px]">Sr.</span>
+            <span className="p-2 text-left min-w-[150px] ">Employee</span>
+            <span className="p-2 text-left min-w-[150px] ">Project</span>
+            <span className="p-2 text-left min-w-[150px] ">Date</span>
             <span className="p-2 text-left min-w-[150px]">Action</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
-            <span className="p-2 flex items-center  gap-2">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+          {allProgress?.map((project, index) => (
+            <div
+              className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={project.id}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{project.name}</span>
+              <span className=" p-2 text-left  ">{project.projectName}</span>
+              <span className=" p-2 text-left ">
+                {project.date.slice(0, 10)}
+              </span>
+
+              <span className="p-2 flex items-center  gap-2">
+                <EditButton
+                  handleUpdate={() => handleToggleViewModal("EDIT")}
+                />
+                <DeleteButton
+                  handleDelete={() => handleToggleViewModal("DELETE")}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -82,7 +123,10 @@ export const Progress = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddProgress setModal={() => handleToggleViewModal("")} />
+        <AddProgress
+          setModal={() => handleToggleViewModal("")}
+          handleGetAllProgress={handleGetAllProgress}
+        />
       )}
 
       {isOpenModal === "EDIT" && (

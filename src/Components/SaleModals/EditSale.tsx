@@ -6,28 +6,46 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
 
-import { UserSelect } from "../InputFields/UserSelect";
-
 import axios from "axios";
 
 import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
+import { OptionField } from "../InputFields/OptionField";
+
+type ADDSALET = {
+  id: number;
+  projectId: number;
+  projectName: string;
+  customerId: number;
+  customerName: string;
+};
+
+type CustomerT = {
+  id: number;
+  customerName: string;
+};
+
+type ProjectT = {
+  id: number;
+  projectName: string;
+};
 
 type AddAttendanceProps = {
   setModal: () => void;
+  seleteSale: ADDSALET | null;
 };
 
-const initialState = {
-  customers: "",
-  projects: "",
-};
-export const EditSale = ({ setModal }: AddAttendanceProps) => {
+export const EditSale = ({ setModal, seleteSale }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProgress, setAddProgress] = useState(initialState);
+  const [updateSale, setUpdateSale] = useState(seleteSale);
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
+
+  const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
+
+  console.log({ updateSale });
 
   const token = currentUser?.token;
 
@@ -38,26 +56,51 @@ export const EditSale = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddProgress({ ...addProgress, [name]: value });
+    setUpdateSale({ ...updateSale, [name]: value } as ADDSALET);
   };
 
-  const getAllUsers = async () => {
+  const handleGetProjects = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/admin/getProjects`, {
         headers: {
           Authorization: token,
         },
       });
-      setAllUsers(res?.data?.users);
+      setAllProjects(res?.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlerSubmitted = async () => {};
+  const getAllCustomers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      setAllCustomers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/admin/updateSalesData/${updateSale?.customerId}/${updateSale?.projectId}/${updateSale?.id}`
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    getAllUsers();
+    handleGetProjects();
+    getAllCustomers();
   }, []);
   return (
     <div>
@@ -66,20 +109,30 @@ export const EditSale = ({ setModal }: AddAttendanceProps) => {
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Update Sale</Title>
             <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Customers*"
-                name="customers"
-                value={addProgress.customers}
+              <OptionField
+                labelName="Customer*"
+                name="customerName"
+                value={updateSale?.customerName ?? ""}
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                optionData={allCustomers?.map((customer) => ({
+                  id: customer.id,
+                  label: customer.customerName,
+                  value: customer.id,
+                }))}
+                inital="Please Select Customer"
               />
 
-              <UserSelect
-                labelName="Projects*"
-                name="projects"
-                value={addProgress.projects}
+              <OptionField
+                labelName="Project*"
+                name="projectName"
+                value={updateSale?.projectName ?? ""}
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                optionData={allProjects?.map((project) => ({
+                  id: project.id,
+                  label: project.projectName,
+                  value: project.id,
+                }))}
+                inital="Please Select Project"
               />
             </div>
 

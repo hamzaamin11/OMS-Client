@@ -3,16 +3,27 @@ import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
-
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  getAllCategories: () => void;
 };
 
 const initialState = {
   categoryName: "",
 };
-export const AddProjectCategory = ({ setModal }: AddAttendanceProps) => {
+export const AddProjectCategory = ({
+  setModal,
+  getAllCategories,
+}: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
   const [addCategory, setAddCategory] = useState(initialState);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,8 +32,22 @@ export const AddProjectCategory = ({ setModal }: AddAttendanceProps) => {
     setAddCategory({ ...addCategory, [name]: value });
   };
 
-  console.log("submitted", addCategory);
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/createCatagory`,
+        addCategory,
+        { headers: { Authorization: token } }
+      );
+      console.log(res.data);
+      getAllCategories();
+      toast.success(res.data.message);
+      setModal();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">

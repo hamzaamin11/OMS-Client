@@ -14,28 +14,46 @@ import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import { TextareaField } from "../InputFields/TextareaField";
+import { OptionField } from "../InputFields/OptionField";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  handleGetAllProgress: () => void;
+};
+
+type SeleteProjectT = {
+  projectId: number;
+  projectName: string;
 };
 
 const initialState = {
-  employeeName: "",
+  employeeId: "",
   project: "",
   date: "",
   note: "",
 };
-export const AddProgress = ({ setModal }: AddAttendanceProps) => {
+export const AddProgress = ({
+  setModal,
+  handleGetAllProgress,
+}: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [addProgress, setAddProgress] = useState(initialState);
 
   const [allUsers, setAllUsers] = useState([]);
 
+  const [seleteProject, setSeleteProject] = useState<SeleteProjectT[] | null>(
+    null
+  );
+
+
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >
   ) => {
     e.preventDefault();
 
@@ -57,11 +75,50 @@ export const AddProgress = ({ setModal }: AddAttendanceProps) => {
     }
   };
 
-  const handlerSubmitted = async () => {};
+  const handleSeleteProject = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getProjectByUser/${addProgress.employeeId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      setSeleteProject(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/addProgress/${addProgress.employeeId}`,
+        addProgress,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      handleGetAllProgress();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getAllUsers();
   }, []);
+  useEffect(() => {
+    if (addProgress.employeeId) {
+      handleSeleteProject();
+    }
+  }, [addProgress?.employeeId]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -71,26 +128,33 @@ export const AddProgress = ({ setModal }: AddAttendanceProps) => {
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
                 labelName="Employees*"
-                name="employeeName"
-                value={addProgress.employeeName}
+                name="employeeId"
+                value={addProgress.employeeId}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
 
-              <InputField
-                labelName="Task*"
+              <OptionField
+                labelName="Project"
                 name="project"
                 handlerChange={handlerChange}
-                inputVal={addProgress.project}
+                value={addProgress.project}
+                optionData={seleteProject?.map((project) => ({
+                  id: project.projectId,
+                  label: project.projectName,
+                  value: project.projectName,
+                }))}
+                inital="Please Select Project"
               />
 
               <InputField
                 labelName="End Date*"
                 name="date"
+                type="date"
                 handlerChange={handlerChange}
-                inputVal={addProgress.note}
+                inputVal={addProgress.date}
               />
-              <InputField
+              <TextareaField
                 labelName="Note*"
                 name="note"
                 handlerChange={handlerChange}

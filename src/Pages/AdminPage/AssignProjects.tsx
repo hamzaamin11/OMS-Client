@@ -5,23 +5,56 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddAssignProject } from "../../Components/AssignProjectModal/AddAssignProject";
 import { EditAssignProject } from "../../Components/AssignProjectModal/EditAssignProject";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
 const numbers = [10, 25, 50, 100];
 
 type ASSIGNPROJECTT = "ADDPROJECT" | "EDITPROJECT" | "DELETEPROJECT" | "";
 
+type ALLASSIGNPROJECTT = {
+  id: number;
+  name: string;
+  projectName: string;
+};
+
 export const AssignProjects = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const [allAssignProjects, setAllAssignProjects] = useState<
+    ALLASSIGNPROJECTT[] | null
+  >(null);
+
   const [isOpenModal, setIsOpenModal] = useState<ASSIGNPROJECTT>("");
 
   const handleToggleViewModal = (active: ASSIGNPROJECTT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
-  console.log("click Me!", isOpenModal);
 
+  const token = currentUser?.token;
+  const handleGetAllAssignProjects = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getAssignProjects`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      console.log(res.data);
+      setAllAssignProjects(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllAssignProjects();
+  }, []);
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
@@ -53,29 +86,30 @@ export const AssignProjects = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Date</span>
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2  min-w-[50px]">Sr</span>
             <span className="p-2 text-left min-w-[150px] ">Users</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock In</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock Out</span>
-            <span className="p-2 text-left min-w-[150px] ">Day</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+            <span className="p-2 text-left min-w-[150px] ">Project</span>
+            <span className="p-2 text-left min-w-[150px] ">Actions</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
-            <span className="p-2 flex items-center  gap-2">
-              <EditButton
-                handleUpdate={() => handleToggleViewModal("EDITPROJECT")}
-              />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETEPROJECT")}
-              />
-            </span>
-          </div>
+          {allAssignProjects?.map((allAssign, index) => (
+            <div
+              className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={allAssign.id}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{allAssign.name}</span>
+              <span className=" p-2 text-left  ">{allAssign.projectName}</span>
+              <span className="p-2 flex items-center  gap-2">
+                <EditButton
+                  handleUpdate={() => handleToggleViewModal("EDITPROJECT")}
+                />
+                <DeleteButton
+                  handleDelete={() => handleToggleViewModal("DELETEPROJECT")}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -84,7 +118,10 @@ export const AssignProjects = () => {
         <Pagination />
       </div>
       {isOpenModal === "ADDPROJECT" && (
-        <AddAssignProject setModal={() => setIsOpenModal("")} />
+        <AddAssignProject
+          setModal={() => setIsOpenModal("")}
+          handleGetAllAssignProjects={handleGetAllAssignProjects}
+        />
       )}
 
       {isOpenModal === "EDITPROJECT" && (

@@ -101,7 +101,7 @@ export const LeaveRequests = () => {
         <UpdateLeave setModal={() => setIsOpenModal("")} />
       )}
       {isOpenModal === "VIEW" && (
-        <ViewLeave setIsOpenModal={() => setIsOpenModal("")} />
+        <ViewLeave setIsOpenModal={() => setIsOpenModal("")}   />
       )}
     </div>
   );

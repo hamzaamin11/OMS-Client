@@ -28,7 +28,7 @@ export const AddLeave = ({ setModal }: AddAttendanceProps) => {
   const token = currentUser?.token;
 
   const [allUsers, setAllUsers] = useState([]);
-  console.log(allUsers);
+
   const [addLeave, setAddLeave] = useState(initialState);
 
   const handlerChange = (

@@ -14,26 +14,91 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+import axios, { AxiosError } from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { ViewReasonWithDraw } from "../../Components/WithdrawModal/ViewReasonWithDraw";
+import { toast } from "react-toastify";
 
 const numbers = [10, 25, 50, 10];
-type TEMPLOYEEWITHDRAW = "ADDWITHDRAW" | "";
+
+type WithdrawEmployeeT = {
+  id: number;
+  employeeId: number;
+  name: string;
+  withdrawDate: string;
+  withdrawReason: string;
+};
+
+type TEMPLOYEEWITHDRAW = "ADDWITHDRAW" | "REASONWITHDRAW" | "";
 
 export const EmployeeWithdraw = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
   const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const [allWithdrawEmployees, setAllWithdrawEmployees] = useState<
+    WithdrawEmployeeT[] | null
+  >(null);
 
   const dispatch = useAppDispatch();
 
+  const token = currentUser?.token;
+
   const [isOpenModal, setIsOpenModal] = useState<TEMPLOYEEWITHDRAW>("");
+
+  const [viewReason, setViewReason] = useState<WithdrawEmployeeT | null>(null);
 
   const handleToggleViewModal = (active: TEMPLOYEEWITHDRAW) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+  const handlegetwithDrawEmployeess = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getWithdrawnEmployees`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllWithdrawEmployees(res.data);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
+
+  const handleClickReason = (reasonData: WithdrawEmployeeT) => {
+    handleToggleViewModal("REASONWITHDRAW");
+    setViewReason(reasonData);
+  };
+
+  const handleReactiveEmployee = async (id: number) => {
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/admin/reActiveEmployee/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      toast.success("Employee Reactive Successfully");
+      console.log(res.data);
+      handlegetwithDrawEmployeess()
+      
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
+
   useEffect(() => {
     document.title = "(OMS)WITHDRAW EMPLOYEE";
     dispatch(navigationStart());
     setTimeout(() => {
       dispatch(navigationSuccess("withdraw Employee"));
     }, 1000);
+    handlegetwithDrawEmployeess();
   }, []);
 
   if (loader) return <Loader />;
@@ -77,24 +142,35 @@ export const EmployeeWithdraw = () => {
             <span className="p-2 text-left min-w-[150px] ">Status</span>
             <span className="p-2 text-left min-w-[150px] ">Action</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className="withdraw-button">
-              <IoIosClose size={20} className="" title="Withdraw" />
-              Withdraw
-            </span>
-            <div className=" flex gap-2">
-              <span className="reason-button ">
-                <TbFileCertificate size={20} title="Reason" />
-                Reason
+          {allWithdrawEmployees?.map((withdraw, index) => (
+            <div
+              className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={withdraw.id}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{withdraw.name}</span>
+              <span className="withdraw-button">
+                <IoIosClose size={20} className="" title="Withdraw" />
+                Withdraw
               </span>
-              <span className="active-button">
-                <BsCheck2 size={20} title="Active" />
-                Active
-              </span>
+              <div className=" flex gap-2">
+                <span
+                  onClick={() => handleClickReason(withdraw)}
+                  className="reason-button "
+                >
+                  <TbFileCertificate size={20} title="Reason" />
+                  Reason
+                </span>
+                <span
+                  className="active-button"
+                  onClick={() => handleReactiveEmployee(withdraw.employeeId)}
+                >
+                  <BsCheck2 size={20} title="Active" />
+                  Active
+                </span>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -104,6 +180,12 @@ export const EmployeeWithdraw = () => {
       </div>
       {isOpenModal === "ADDWITHDRAW" && (
         <AddWithdraw setModal={() => setIsOpenModal("")} />
+      )}
+      {isOpenModal === "REASONWITHDRAW" && (
+        <ViewReasonWithDraw
+          setIsOpenModal={() => handleToggleViewModal("")}
+          viewReason={viewReason}
+        />
       )}
     </div>
   );

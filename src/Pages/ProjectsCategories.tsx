@@ -12,20 +12,79 @@ import { EditCategory } from "../Components/ProjectCategoryModal/EditCategory";
 import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
 import { EditButton } from "../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
+import axios from "axios";
+import { BASE_URL } from "../Content/URL";
+import { toast } from "react-toastify";
 
 const numbers = [10, 25, 50, 10];
 
 type TPROJECTCATEGORY = "ADDCATEGORY" | "EDITCATEGORY" | "DELETECATEGORY" | "";
 
+type CATEGORYT = {
+  id: number;
+  categoryName: string;
+};
+
 export const ProjectsCatogries = () => {
   const { loader } = useAppSelector((state) => state?.NavigateSate);
 
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
   const dispatch = useAppDispatch();
+
+  const [allCategories, setAllCategories] = useState<CATEGORYT[] | null>(null);
 
   const [isOpenModal, setIsOpenModal] = useState<TPROJECTCATEGORY>("");
 
+  const [selectCategory, setSelectCategory] = useState<CATEGORYT | null>(null);
+
+  const [catchId, setCatchId] = useState<number>();
+
   const handleToggleViewModal = (active: TPROJECTCATEGORY) => {
     setIsOpenModal((prev) => (prev === active ? "" : "ADDCATEGORY"));
+  };
+
+  const getAllCategories = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getCategory`, {
+        headers: { Authorization: token },
+      });
+      console.log(res.data);
+      setAllCategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSelectCategory = (data: CATEGORYT) => {
+    setIsOpenModal("EDITCATEGORY");
+    setSelectCategory(data);
+  };
+
+  const clickDeleteButton = (id: number) => {
+    setIsOpenModal("DELETECATEGORY");
+    setCatchId(id);
+  };
+
+  const handleDeleteCategory = async () => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/admin/deleteCategory/${catchId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      getAllCategories();
+      toast.success("Category has been deleted successfully");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -34,6 +93,7 @@ export const ProjectsCatogries = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("Project Category"));
     }, 1000);
+    getAllCategories();
   }, []);
 
   if (loader) return <Loader />;
@@ -75,16 +135,23 @@ export const ProjectsCatogries = () => {
             <span className="p-2  min-w-[150px]">Name</span>
             <span className="p-2 text-left min-w-[150px] ">Action</span>
           </div>
-          <div className="grid grid-cols-2 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">Blog</span>
+          {allCategories?.map((category) => (
+            <div
+              className="grid grid-cols-2 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={category.id}
+            >
+              <span className=" p-2 text-left ">{category?.categoryName}</span>
 
-            <span className="p-2 flex items-center  gap-2">
-              <EditButton handleUpdate={() => setIsOpenModal("EDITCATEGORY")} />
-              <DeleteButton
-                handleDelete={() => setIsOpenModal("DELETECATEGORY")}
-              />
-            </span>
-          </div>
+              <span className="p-2 flex items-center  gap-2">
+                <EditButton
+                  handleUpdate={() => handleSelectCategory(category)}
+                />
+                <DeleteButton
+                  handleDelete={() => clickDeleteButton(category.id)}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -93,18 +160,25 @@ export const ProjectsCatogries = () => {
         <Pagination />
       </div>
       {isOpenModal === "ADDCATEGORY" && (
-        <AddProjectCategory setModal={() => setIsOpenModal("")} />
+        <AddProjectCategory
+          setModal={() => setIsOpenModal("")}
+          getAllCategories={getAllCategories}
+        />
       )}
 
       {isOpenModal === "EDITCATEGORY" && (
-        <EditCategory setModal={() => setIsOpenModal("")} />
+        <EditCategory
+          setModal={() => setIsOpenModal("")}
+          selectCategory={selectCategory}
+          getAllCategories={getAllCategories}
+        />
       )}
       {isOpenModal === "DELETECATEGORY" && (
         <ConfirmationModal
           isOpen={() => setIsOpenModal("DELETECATEGORY")}
           onClose={() => setIsOpenModal("")}
           message="Are you sure you want to delete this category"
-          onConfirm={() => setIsOpenModal("")}
+          onConfirm={handleDeleteCategory}
         />
       )}
     </div>

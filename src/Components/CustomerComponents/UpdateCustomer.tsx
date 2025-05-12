@@ -26,16 +26,6 @@ export const UpdateCustomer = ({
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
 
-  // const [showTime, setShowTime] = useState("");
-  // setInterval(() => {
-  //   const getTime = new Date().toLocaleTimeString("en-US", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: true,
-  //   });
-  //   setShowTime(getTime);
-  // }, 1000);
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;

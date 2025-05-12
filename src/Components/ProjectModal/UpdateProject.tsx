@@ -1,39 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
 import { Title } from "../Title";
 import { TextareaField } from "../InputFields/TextareaField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+
+type AllProjectT = {
+  id: number;
+  projectName: string;
+  projectCategory: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+};
+
+type AllCategoryT = {
+  id: number;
+  categoryName: string;
+};
 
 type AddAttendanceProps = {
   setModal: () => void;
+  selectProject: AllProjectT | null;
 };
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
 
-const optionData = [
-  { label: "Select Project Category", value: "" },
-  { label: "Web Application", value: "webApplicaton" },
-  {
-    label: "Blog",
-    value: "blog",
-  },
-  {
-    label: "Graphic Designing",
-    value: "graphicDesign",
-  },
-];
+export const UpdateProject = ({
+  setModal,
+  selectProject,
+}: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
 
-const initialState = {
-  projectName: "",
-  selectCategory: "",
-  projectDescription: "",
-  startDate: currentDate,
-  endDate: currentDate,
-};
-export const UpdateProject = ({ setModal }: AddAttendanceProps) => {
-  const [updateProject, setUpdateProject] = useState(initialState);
+  const [updateProject, setUpdateProject] = useState(selectProject);
+
+  const [categories, setCategories] = useState<AllCategoryT[] | null>(null);
+
+  const token = currentUser?.token;
 
   const handlerChange = (
     e: React.ChangeEvent<
@@ -42,11 +47,25 @@ export const UpdateProject = ({ setModal }: AddAttendanceProps) => {
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setUpdateProject({ ...updateProject, [name]: value.trim() });
+    setUpdateProject({ ...updateProject, [name]: value } as AllProjectT);
   };
-
+  const handleGetAllCategories = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getCategory`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setCategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   console.log("submitted", updateProject);
   const handlerSubmitted = async () => {};
+  useEffect(() => {
+    handleGetAllCategories();
+  }, []);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -59,15 +78,20 @@ export const UpdateProject = ({ setModal }: AddAttendanceProps) => {
                 placeHolder="Enter the Project Name"
                 type="text"
                 name="projectName"
-                inputVal={updateProject.projectName}
+                inputVal={updateProject?.projectName}
                 handlerChange={handlerChange}
               />
               <OptionField
                 labelName="Project Category*"
                 name="selectCategory"
-                value={updateProject.selectCategory}
+                value={updateProject?.projectCategory ?? ""}
                 handlerChange={handlerChange}
-                optionData={optionData}
+                optionData={categories?.map((category) => ({
+                  id: category.id,
+                  label: category?.categoryName,
+                  value: category?.categoryName,
+                }))}
+                inital={"Please Select Project Category"}
               />
 
               <TextareaField
@@ -75,14 +99,14 @@ export const UpdateProject = ({ setModal }: AddAttendanceProps) => {
                 name="projectDescription"
                 placeHolder="Enter Project Description..."
                 handlerChange={handlerChange}
-                inputVal={updateProject.projectDescription}
+                inputVal={updateProject?.description ?? ""}
               />
               <InputField
                 labelName="Start Date*"
                 placeHolder="Enter the Start Date"
                 type="Date"
                 name="startDate"
-                inputVal={updateProject.startDate}
+                inputVal={updateProject?.startDate.slice(0, 10) ?? ""}
                 handlerChange={handlerChange}
               />
 
@@ -91,7 +115,7 @@ export const UpdateProject = ({ setModal }: AddAttendanceProps) => {
                 placeHolder="Enter the End Date"
                 type="date"
                 name="endDate"
-                inputVal={updateProject.endDate}
+                inputVal={updateProject?.endDate.slice(0, 10) ?? ""}
                 handlerChange={handlerChange}
               />
             </div>

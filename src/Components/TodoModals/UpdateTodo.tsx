@@ -15,22 +15,25 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
 
+type ALLTODOT = {
+  id: number;
+  name: string;
+  task: string;
+  startDate: string;
+  endDate: string;
+  note: string;
+  deadline: string;
+};
+
 type AddAttendanceProps = {
   setModal: () => void;
+  seleteTodo: ALLTODOT | null;
 };
 
-const initialState = {
-  employeeName: "",
-  task: "",
-  note: "",
-  startDate: "",
-  endDate: "",
-  deadLine: "",
-};
-export const UpdateTodo = ({ setModal }: AddAttendanceProps) => {
+export const UpdateTodo = ({ setModal, seleteTodo }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addTodo, setAddTodo] = useState(initialState);
+  const [addTodo, setAddTodo] = useState(seleteTodo);
 
   const [allUsers, setAllUsers] = useState([]);
 
@@ -43,7 +46,7 @@ export const UpdateTodo = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddTodo({ ...addTodo, [name]: value });
+    setAddTodo({ ...addTodo, [name]: value } as ALLTODOT);
   };
 
   const getAllUsers = async () => {
@@ -73,8 +76,8 @@ export const UpdateTodo = ({ setModal }: AddAttendanceProps) => {
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
                 labelName="Employees*"
-                name="employeeName"
-                value={addTodo.employeeName}
+                name="name"
+                value={addTodo?.name ?? "guest"}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
@@ -83,36 +86,36 @@ export const UpdateTodo = ({ setModal }: AddAttendanceProps) => {
                 labelName="Task*"
                 name="task"
                 handlerChange={handlerChange}
-                inputVal={addTodo.task}
+                inputVal={addTodo?.task}
               />
 
               <InputField
                 labelName="Note*"
                 name="note"
                 handlerChange={handlerChange}
-                inputVal={addTodo.note}
+                inputVal={addTodo?.note}
               />
 
               <div className="flex items-center justify-center gap-6">
                 <InputField
                   labelName="Start Date*"
-                  name="date"
+                  type="date"
                   handlerChange={handlerChange}
-                  inputVal={addTodo.note}
+                  inputVal={addTodo?.startDate.slice(0, 10)}
                 />
 
                 <InputField
                   labelName="End Date*"
-                  name="date"
+                  type="date"
                   handlerChange={handlerChange}
-                  inputVal={addTodo.note}
+                  inputVal={addTodo?.endDate.slice(0, 10)}
                 />
 
                 <InputField
                   labelName="Deadline*"
-                  name="date"
+                  type="date"
                   handlerChange={handlerChange}
-                  inputVal={addTodo.note}
+                  inputVal={addTodo?.deadline.slice(0, 10)}
                 />
               </div>
             </div>

@@ -14,25 +14,38 @@ import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
 
 type AddAttendanceProps = {
   setModal: () => void;
 };
 
 const initialState = {
-  employeeName: "",
+  employeeId: "",
   project: "",
   date: "",
   note: "",
 };
+
+type SeleteProjectT = {
+  projectId: number;
+  projectName: string;
+};
+
 export const EditProgress = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProgress, setAddProgress] = useState(initialState);
+  const [updateProgress, setUpdateProgress] = useState(initialState);
 
   const [allUsers, setAllUsers] = useState([]);
 
+  const [seleteProject, setSeleteProject] = useState<SeleteProjectT[] | null>(
+    null
+  );
+
   const token = currentUser?.token;
+
+  console.log(updateProgress, "<=>");
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
@@ -41,7 +54,7 @@ export const EditProgress = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddProgress({ ...addProgress, [name]: value });
+    setUpdateProgress({ ...updateProgress, [name]: value });
   };
 
   const getAllUsers = async () => {
@@ -57,11 +70,34 @@ export const EditProgress = ({ setModal }: AddAttendanceProps) => {
     }
   };
 
+  const handleSeleteProject = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getProjectByUser/${updateProgress.employeeId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      setSeleteProject(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handlerSubmitted = async () => {};
 
   useEffect(() => {
     getAllUsers();
   }, []);
+
+  useEffect(() => {
+    if (updateProgress.employeeId) {
+      handleSeleteProject();
+    }
+  }, [updateProgress.employeeId]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -71,30 +107,36 @@ export const EditProgress = ({ setModal }: AddAttendanceProps) => {
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
                 labelName="Employees*"
-                name="employeeName"
-                value={addProgress.employeeName}
+                name="employeeId"
+                value={updateProgress.employeeId}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
 
-              <InputField
-                labelName="Task*"
+              <OptionField
+                labelName="Project"
                 name="project"
                 handlerChange={handlerChange}
-                inputVal={addProgress.project}
+                value={updateProgress.project}
+                optionData={seleteProject?.map((project) => ({
+                  id: project.projectId,
+                  label: project.projectName,
+                  value: project.projectName,
+                }))}
+                inital="Please Select Project"
               />
 
               <InputField
                 labelName="End Date*"
                 name="date"
                 handlerChange={handlerChange}
-                inputVal={addProgress.note}
+                inputVal={updateProgress.note}
               />
               <InputField
                 labelName="Note*"
                 name="note"
                 handlerChange={handlerChange}
-                inputVal={addProgress.note}
+                inputVal={updateProgress.note}
               />
             </div>
 

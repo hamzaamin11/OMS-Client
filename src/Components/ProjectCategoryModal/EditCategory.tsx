@@ -4,30 +4,63 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 
 import { Title } from "../Title";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
+
+type selectCategory = {
+  id: number;
+  categoryName: string;
+};
 
 type AddAttendanceProps = {
   setModal: () => void;
+  selectCategory: selectCategory | null;
+  getAllCategories: () => void;
 };
 
-const initialState = {
-  categoryName: "",
-};
-export const EditCategory = ({ setModal }: AddAttendanceProps) => {
-  const [addCategory, setAddCategory] = useState(initialState);
+export const EditCategory = ({
+  setModal,
+  selectCategory,
+  getAllCategories,
+}: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const [updateCategory, setUpdateCategory] = useState(selectCategory);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddCategory({ ...addCategory, [name]: value.trim() });
+    setUpdateCategory({ ...updateCategory, [name]: value } as selectCategory);
   };
-
-  console.log("submitted", addCategory);
-  const handlerSubmitted = async () => {};
+  const token = currentUser?.token;
+  console.log("submitted", updateCategory);
+  const handleUpdateCategory = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/admin/alterCategory/${updateCategory?.id}`,
+        updateCategory,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data.message);
+      getAllCategories();
+      setModal();
+      toast.success(res.data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
+          <form onSubmit={handleUpdateCategory}>
             <Title setModal={() => setModal()}>Update Category</Title>
             <div className="mx-2   flex-wrap gap-3  ">
               <InputField
@@ -35,7 +68,7 @@ export const EditCategory = ({ setModal }: AddAttendanceProps) => {
                 placeHolder="Enter the Project Category"
                 type="text"
                 name="categoryName"
-                inputVal={addCategory.categoryName}
+                inputVal={updateCategory?.categoryName}
                 handlerChange={handlerChange}
               />
             </div>

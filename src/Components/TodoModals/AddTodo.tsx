@@ -14,20 +14,25 @@ import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  getAllTodos: () => void;
 };
 
+const currentDate =
+  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+
 const initialState = {
-  employeeName: "",
+  employeeId: "",
   task: "",
   note: "",
-  startDate: "",
-  endDate: "",
-  deadLine: "",
+  startDate: currentDate,
+  endDate: currentDate,
+  deadline: currentDate,
 };
-export const AddTodo = ({ setModal }: AddAttendanceProps) => {
+export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [addTodo, setAddTodo] = useState(initialState);
@@ -59,7 +64,23 @@ export const AddTodo = ({ setModal }: AddAttendanceProps) => {
     }
   };
 
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${BASE_URL}/admin/createTodo`, addTodo, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      console.log(res.data);
+      setModal();
+      getAllTodos();
+      toast.success("Todo submitted successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getAllUsers();
@@ -73,8 +94,8 @@ export const AddTodo = ({ setModal }: AddAttendanceProps) => {
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
                 labelName="Employees*"
-                name="employeeName"
-                value={addTodo.employeeName}
+                name="employeeId"
+                value={addTodo.employeeId}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
@@ -93,26 +114,29 @@ export const AddTodo = ({ setModal }: AddAttendanceProps) => {
                 inputVal={addTodo.note}
               />
 
-              <div className="flex items-center justify-center gap-6">
+              <div className="flex items-center justify-center gap-16">
                 <InputField
                   labelName="Start Date*"
-                  name="date"
+                  type="date"
+                  name="startDate"
                   handlerChange={handlerChange}
-                  inputVal={addTodo.note}
+                  inputVal={addTodo.startDate}
                 />
 
                 <InputField
                   labelName="End Date*"
-                  name="date"
+                  type="date"
+                  name="endDate"
                   handlerChange={handlerChange}
-                  inputVal={addTodo.note}
+                  inputVal={addTodo.endDate}
                 />
 
                 <InputField
                   labelName="Deadline*"
-                  name="date"
+                  type="date"
+                  name="deadline"
                   handlerChange={handlerChange}
-                  inputVal={addTodo.note}
+                  inputVal={addTodo.deadline}
                 />
               </div>
             </div>

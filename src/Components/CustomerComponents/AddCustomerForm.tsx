@@ -3,7 +3,7 @@ import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
@@ -63,7 +63,8 @@ export const AddCustomer = ({
       toast.success(res.data.message);
       handleGetAllCustomers();
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
     }
   };
   return (

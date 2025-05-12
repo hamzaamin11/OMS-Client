@@ -1,43 +1,78 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { TextareaField } from "../InputFields/TextareaField";
-import { OptionField } from "../InputFields/OptionField";
+import axios, { AxiosError } from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { UserSelect } from "../InputFields/UserSelect";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
 };
-
-const optionData = [
-  { label: "Please Select Employee", value: "" },
-  { label: "Hamza", value: "hamza" },
-  { label: "Danish", value: "danish" },
-  { label: "Awais", value: "awais" },
-  { label: "Hadeed", value: "hadeed" },
-  { label: "Adan", value: "adan" },
-];
-
 const initialState = {
-  employeeName: "",
-  reason: "",
+  id: "",
+  withdrawReason: "",
 };
 
 export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const [allUsers, setAllUsers] = useState([]);
+
   const [addWithdraw, setAddWithdraw] = useState(initialState);
+
+  console.log("user data =>", addWithdraw);
+
+  const token = currentUser?.token;
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddWithdraw({ ...addWithdraw, [name]: value.trim() });
+    setAddWithdraw({ ...addWithdraw, [name]: value });
   };
 
-  console.log("submitted", addWithdraw);
+  const getAllUsers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllUsers(res?.data?.users);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
 
-  const handlerSubmitted = async () => {};
-
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/withdrawEmployee/${addWithdraw?.id}`,
+        addWithdraw,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      setModal();
+      toast.success("Employee withdraw suceessfully");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
+  useEffect(() => {
+    getAllUsers();
+  }, []);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -45,17 +80,17 @@ export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Employee Withdraw</Title>
             <div className="mx-2   flex-wrap gap-3  ">
-              <OptionField
+              <UserSelect
                 labelName="Select Employee*"
-                name="employeeName"
+                name="id"
                 handlerChange={handlerChange}
-                optionData={optionData}
-                value={addWithdraw.employeeName}
+                optionData={allUsers}
+                value={addWithdraw.id}
               />
               <TextareaField
-                labelName="Reason*"
-                name="reason"
-                inputVal={addWithdraw.reason}
+                labelName="Withdraw Reason*"
+                name="withdrawReason"
+                inputVal={addWithdraw.withdrawReason}
                 handlerChange={handlerChange}
               />
             </div>

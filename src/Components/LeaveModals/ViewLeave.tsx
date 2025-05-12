@@ -1,5 +1,4 @@
 import { Title } from "../Title";
-import profilePicture from "../../assets/vector.png";
 
 type CustomerDetailT = {
   id: number;

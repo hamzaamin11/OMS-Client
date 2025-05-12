@@ -1,21 +1,25 @@
 type option = {
-  label: string;
-  value: string;
+  id: number;
+  label: string | number;
+  value: string | number;
 };
 
 type OptionFieldProps = {
   labelName: string;
   handlerChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   name: string;
-  Value: string;
-  optionData: option[];
+  value: string;
+  optionData: option[] | undefined;
+  inital: string;
 };
+
 export const OptionField = ({
   labelName,
   handlerChange,
   name,
-  Value,
+  value,
   optionData,
+  inital,
 }: OptionFieldProps) => {
   return (
     <div className=" flex flex-col  mt-3">
@@ -23,13 +27,14 @@ export const OptionField = ({
         {labelName}
       </label>
       <select
-        value={Value}
+        value={value}
         onChange={handlerChange}
         name={name}
         className="p-1 rounded bg-white text-gray-800  border border-gray-300 focus:outline-indigo-500"
       >
-        {optionData.map((options, index) => (
-          <option value={options.value} key={index}>
+        <option value={""}>{inital}</option>
+        {optionData?.map((options, index) => (
+          <option value={options.label} key={index}>
             {options.label}
           </option>
         ))}
