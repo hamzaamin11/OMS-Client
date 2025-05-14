@@ -6,32 +6,38 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
 
-import { UserSelect } from "../InputFields/UserSelect";
-
 import axios from "axios";
 
 import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
 
 type AddAttendanceProps = {
   setModal: () => void;
 };
 
+const currentDate =
+  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+
+type CategoryT = { id: number; categoryName: string };
+
 const initialState = {
-  employeeName: "",
   expenseName: "",
-  account: "",
-  addBy: "",
-  date: "",
+  expenseCategoryId: "",
+  amount: "",
+  addedBy: "",
+  date: currentDate,
 };
 export const AddExpense = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [addExpense, setAddExpense] = useState(initialState);
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allExpenseCategory, setAllExpenseCategory] = useState<
+    CategoryT[] | null
+  >(null);
 
   const token = currentUser?.token;
 
@@ -47,18 +53,31 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
   const getAllUsers = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/admin/getExpenseCategory`, {
         headers: {
           Authorization: token,
         },
       });
-      setAllUsers(res?.data?.users);
+      setAllExpenseCategory(res?.data);
+      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${BASE_URL}/admin/addExpense`, addExpense, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getAllUsers();
@@ -70,38 +89,44 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Expense</Title>
             <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Employees*"
-                name="employeeName"
-                value={addExpense.employeeName}
-                handlerChange={handlerChange}
-                optionData={allUsers}
-              />
-
               <InputField
-                labelName="Expense Category*"
-                name="expenseExpense"
+                labelName="Expense Name*"
+                name="expenseName"
                 handlerChange={handlerChange}
                 inputVal={addExpense.expenseName}
               />
-
-              <InputField
-                labelName="Account*"
-                name="account"
+              <OptionField
+                labelName="Expense Category"
+                name="expenseCategoryId"
+                value={addExpense.expenseCategoryId}
                 handlerChange={handlerChange}
-                inputVal={addExpense.account}
+                optionData={allExpenseCategory?.map((category) => ({
+                  id: category.id,
+                  label: category.categoryName,
+                  value: category.id,
+                }))}
+                inital="Please Select Category"
               />
 
               <InputField
-                labelName="Add By*"
-                name="addBy"
+                labelName="Amount*"
+                name="amount"
+                type="number"
                 handlerChange={handlerChange}
-                inputVal={addExpense.addBy}
+                inputVal={addExpense.amount}
+              />
+
+              <InputField
+                labelName="Added By*"
+                name="addedBy"
+                handlerChange={handlerChange}
+                inputVal={addExpense.addedBy}
               />
 
               <InputField
                 labelName="Date*"
                 name="date"
+                type="date"
                 handlerChange={handlerChange}
                 inputVal={addExpense.date}
               />

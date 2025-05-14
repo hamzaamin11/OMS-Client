@@ -4,36 +4,77 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { OptionField } from "../InputFields/OptionField";
 import { InputField } from "../InputFields/InputField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
+
+type ALLCONFIGT = {
+  id: number;
+  configureType: string;
+  configureTime: string;
+};
 
 type AddAttendanceProps = {
   setModal: () => void;
+  handleGetAllTimeConfig: () => void;
+  selectData: ALLCONFIGT | null;
 };
 
 const optionData = [
-  { label: "Please Select config type", value: "" },
-  { label: "Absent", value: "absent" },
-  { label: "Late", value: "late" },
+  {
+    id: 1,
+    label: "Late",
+    value: "late",
+  },
+  {
+    id: 2,
+    label: "Absent",
+    value: "absent",
+  },
 ];
 
-const initialState = {
-  configureType: "",
-  configureTime: "",
-};
+export const EditConfigTime = ({
+  setModal,
+  handleGetAllTimeConfig,
+  selectData,
+}: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
 
-export const EditConfigTime = ({ setModal }: AddAttendanceProps) => {
-  const [addWithdraw, setAddWithdraw] = useState(initialState);
+  const [updateConfig, setUpdateAddConfig] = useState(selectData);
+
+  const token = currentUser?.token;
+
+
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddWithdraw({ ...addWithdraw, [name]: value.trim() });
+    setUpdateAddConfig({ ...updateConfig, [name]: value.trim() } as ALLCONFIGT);
   };
 
-  console.log("submitted", addWithdraw);
-
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/admin/updateTime/${updateConfig?.id}`,
+        updateConfig,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      handleGetAllTimeConfig();
+      setModal();
+      toast.success("Configuration time saved successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -47,13 +88,14 @@ export const EditConfigTime = ({ setModal }: AddAttendanceProps) => {
                 name="configureType"
                 handlerChange={handlerChange}
                 optionData={optionData}
-                value={addWithdraw.configureType}
+                value={updateConfig?.configureType ?? ""}
+                inital="Please Select type"
               />
               <InputField
                 labelName="Configure Time*"
-                name="onfigureTime"
-                type="date"
-                inputVal={addWithdraw.configureTime}
+                name="configureTime"
+                type="time"
+                inputVal={updateConfig?.configureTime ?? ""}
                 handlerChange={handlerChange}
               />
             </div>

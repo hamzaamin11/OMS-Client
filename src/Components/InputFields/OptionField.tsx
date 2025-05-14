@@ -34,7 +34,7 @@ export const OptionField = ({
       >
         <option value={""}>{inital}</option>
         {optionData?.map((options, index) => (
-          <option value={options.label} key={index}>
+          <option value={options.value} key={index}>
             {options.label}
           </option>
         ))}

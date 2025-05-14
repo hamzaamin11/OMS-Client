@@ -32,13 +32,21 @@ export const Sales = () => {
 
   const [allSales, setAllSales] = useState<ADDSALET[] | null>(null);
 
+  console.log("moth mar k ", allSales);
+
   const [seleteSale, setSeleteSale] = useState<ADDSALET | null>(null);
+
+  const [catchId, setCatchId] = useState<number>();
+
+  console.log(catchId);
 
   const handleToggleViewModal = (active: SALET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
   const token = currentUser?.token;
+
+  console.log("=>", allSales?.length);
 
   const handleGetsales = async () => {
     try {
@@ -58,9 +66,32 @@ export const Sales = () => {
     setSeleteSale(data);
   };
 
+  const handleClickDeleteButton = (id: number) => {
+    handleToggleViewModal("DELETE");
+    setCatchId(id);
+  };
+
+  const handleDeleteSale = async () => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/admin/deleteSale/${catchId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     handleGetsales();
   }, []);
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sale" activeFile="All Sale,s list" />
@@ -98,23 +129,30 @@ export const Sales = () => {
             <span className="p-2 text-left min-w-[150px] ">Customer</span>
             <span className="p-2 text-left min-w-[150px] ">Actions</span>
           </div>
-          {allSales?.map((sale, index) => (
-            <div
-              className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
-              key={sale.id}
-            >
-              <span className=" p-2 text-left ">{index + 1}</span>
-              <span className=" p-2 text-left   ">{sale.projectName}</span>
-              <span className=" p-2 text-left  ">{sale.customerName}</span>
-              <span className="p-2 flex items-center  gap-2">
-                <EditButton handleUpdate={() => handleClickEditButtton(sale)} />
 
-                <DeleteButton
-                  handleDelete={() => handleToggleViewModal("DELETE")}
-                />
-              </span>
-            </div>
-          ))}
+          {allSales?.length === 0 ? (
+            <div className="text-gray-800 text-center">No data found</div>
+          ) : (
+            allSales?.map((sale, index) => (
+              <div
+                className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                key={sale.id}
+              >
+                <span className=" p-2 text-left ">{index + 1}</span>
+                <span className=" p-2 text-left   ">{sale.projectName}</span>
+                <span className=" p-2 text-left  ">{sale.customerName}</span>
+                <span className="p-2 flex items-center  gap-2">
+                  <EditButton
+                    handleUpdate={() => handleClickEditButtton(sale)}
+                  />
+
+                  <DeleteButton
+                    handleDelete={() => handleClickDeleteButton(sale.id)}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -134,6 +172,7 @@ export const Sales = () => {
         <EditSale
           setModal={() => handleToggleViewModal("")}
           seleteSale={seleteSale}
+          handleGetsales={handleGetsales}
         />
       )}
 
@@ -141,7 +180,8 @@ export const Sales = () => {
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
           onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleToggleViewModal("")}
+          onConfirm={() => handleDeleteSale()}
+          message="Are you sure you want to delete this Sale?"
         />
       )}
     </div>

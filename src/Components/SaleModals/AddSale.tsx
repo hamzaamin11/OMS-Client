@@ -6,7 +6,6 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
 
-
 import axios from "axios";
 
 import { BASE_URL } from "../../Content/URL";
@@ -30,8 +29,8 @@ type ProjectT = {
   projectName: string;
 };
 const initialState = {
-  customers: "",
-  projects: "",
+  customerId: "",
+  projectId: "",
 };
 export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -86,19 +85,15 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/addSales/${addSale.customers}/${addSale.projects}`,
-        addSale,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const res = await axios.post(`${BASE_URL}/admin/addSales`, addSale, {
+        headers: {
+          Authorization: token,
+        },
+      });
       console.log(res.data);
       handleGetsales();
       toast.success("Sale added sucessfully");
-      setModal()
+      setModal();
     } catch (error) {
       console.log(error);
     }
@@ -118,8 +113,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
             <div className="mx-2 flex-wrap gap-3  ">
               <OptionField
                 labelName="Customer*"
-                name="customers"
-                value={addSale.customers}
+                name="customerId"
+                value={addSale.customerId}
                 handlerChange={handlerChange}
                 optionData={allCustomers?.map((customer) => ({
                   id: customer.id,
@@ -131,8 +126,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
 
               <OptionField
                 labelName="Projects*"
-                name="projects"
-                value={addSale.projects}
+                name="projectId"
+                value={addSale.projectId}
                 handlerChange={handlerChange}
                 optionData={allProjects?.map((project) => ({
                   id: project.id,

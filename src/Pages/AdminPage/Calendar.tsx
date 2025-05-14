@@ -8,19 +8,43 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddCalendarSession } from "../../Components/CalendarModal/AddCalendarSession";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
 const numbers = [10, 25, 50, 10];
 
 type CALENDART = "ADD" | "EDIT" | "DELETE" | "";
 
 export const Calendar = () => {
+  const { currentUser } = useAppSelector((state) => state?.officeState);
+
   const [isOpenModal, setIsOpenModal] = useState<CALENDART>("");
 
   const handleToggleViewModal = (active: CALENDART) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const token = currentUser?.token;
+
+  const handleGetAllCalendar = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getCalendarSession`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllCalendar();
+  }, []);
 
   return (
     <div className="w-full mx-2">
@@ -55,17 +79,15 @@ export const Calendar = () => {
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden mx-auto">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_2fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500">
+          <div className="grid grid-cols-[1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500">
             <span className="p-2 min-w-[50px]">Sr#</span>
-            <span className="p-2 text-left">Academic Session</span>
             <span className="p-2 text-left">Year</span>
             <span className="p-2 text-left">Month</span>
           </div>
 
           {/* Row */}
-          <div className="grid grid-cols-[1fr_2fr_1fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200">
+          <div className="grid grid-cols-[1fr_1fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200">
             <span className="p-2 text-left">1</span>
-            <span className="p-2 text-left">abca</span>
             <span className="p-2 text-left">2025</span>
             <span className="p-2 text-left">April</span>
           </div>

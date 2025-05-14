@@ -5,22 +5,93 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddPayment } from "../../Components/PayementModals/AddPayment";
 import { EditPayment } from "../../Components/PayementModals/EditPayment";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 const numbers = [10, 25, 50, 100];
 
 type PATMENTT = "ADD" | "EDIT" | "DELETE" | "";
 
+type PAYMENTMETHODT = {
+  id: number;
+  customerName: string;
+  amount: string;
+  paymentType: string;
+  description: string;
+  date: string;
+};
+
 export const Payments = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
   const [isOpenModal, setIsOpenModal] = useState<PATMENTT>("");
+
+  const [allPayment, setAllPayment] = useState<PAYMENTMETHODT[] | null>(null);
+
+  const [seletePayment, setSeletePayment] = useState<PAYMENTMETHODT | null>(
+    null
+  );
+
+  const [catchId, setCatchId] = useState<number>();
+
+  const token = currentUser?.token;
 
   const handleToggleViewModal = (active: PATMENTT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
+  const handleGetPayments = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getPayments`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      setAllPayment(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickEditButton = (data: PAYMENTMETHODT) => {
+    handleToggleViewModal("EDIT");
+    setSeletePayment(data);
+  };
+
+  const handleClickDeleteButton = (id: number) => {
+    handleToggleViewModal("DELETE");
+    setCatchId(id);
+  };
+
+  const handleDeletePayment = async () => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/admin/deletePayment/${catchId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      handleGetPayments();
+      toast.success("Payment has been deleted succesfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetPayments();
+  }, []);
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Payment" activeFile="All Payment list" />
@@ -53,27 +124,42 @@ export const Payments = () => {
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
           <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Date</span>
-            <span className="p-2 text-left min-w-[150px] ">Users</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock In</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock Out</span>
-            <span className="p-2 text-left min-w-[150px] ">Day</span>
+            <span className="p-2  min-w-[50px]">Sr</span>
+            <span className="p-2 text-left min-w-[150px] ">Customers</span>
+            <span className="p-2 text-left min-w-[150px] ">Amount</span>
+            <span className="p-2 text-left min-w-[150px] ">Payment Type</span>
+            <span className="p-2 text-left min-w-[150px] ">Date</span>
             <span className="p-2 text-left min-w-[150px]">Action</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
-            <span className="p-2 flex items-center  gap-2">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+          {allPayment?.length === 0 ? (
+            <div>No data found yet</div>
+          ) : (
+            allPayment?.map((payment, index) => (
+              <div
+                className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                key={payment.id}
+              >
+                <span className=" p-2 text-left ">{index + 1}</span>
+                <span className=" p-2 text-left   ">
+                  {payment.customerName}
+                </span>
+                <span className=" p-2 text-left  ">{payment.amount}</span>
+                <span className=" p-2 text-left ">{payment.paymentType}</span>
+                <span className=" p-2 text-left ">
+                  {payment.date.slice(0, 10)}
+                </span>
+                <span className="p-2 flex items-center  gap-2">
+                  <EditButton
+                    handleUpdate={() => handleClickEditButton(payment)}
+                  />
 
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+                  <DeleteButton
+                    handleDelete={() => handleClickDeleteButton(payment.id)}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -83,18 +169,25 @@ export const Payments = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddPayment setModal={() => handleToggleViewModal("")} />
+        <AddPayment
+          setModal={() => handleToggleViewModal("")}
+          handleGetPayments={handleGetPayments}
+        />
       )}
 
       {isOpenModal === "EDIT" && (
-        <EditPayment setModal={() => handleToggleViewModal("")} />
+        <EditPayment
+          setModal={() => handleToggleViewModal("")}
+          seletePayment={seletePayment}
+        />
       )}
 
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
           onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleToggleViewModal("")}
+          onConfirm={() => handleDeletePayment()}
+          message="Are you sure to want delete this payment"
         />
       )}
     </div>

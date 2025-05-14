@@ -34,9 +34,14 @@ type ProjectT = {
 type AddAttendanceProps = {
   setModal: () => void;
   seleteSale: ADDSALET | null;
+  handleGetsales: () => void;
 };
 
-export const EditSale = ({ setModal, seleteSale }: AddAttendanceProps) => {
+export const EditSale = ({
+  setModal,
+  seleteSale,
+  handleGetsales,
+}: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [updateSale, setUpdateSale] = useState(seleteSale);
@@ -90,9 +95,14 @@ export const EditSale = ({ setModal, seleteSale }: AddAttendanceProps) => {
     e.preventDefault();
     try {
       const res = await axios.put(
-        `${BASE_URL}/admin/updateSalesData/${updateSale?.customerId}/${updateSale?.projectId}/${updateSale?.id}`
+        `${BASE_URL}/admin/updateSalesData/${updateSale?.customerId}/${updateSale?.projectId}/${updateSale?.id}`,
+        updateSale,
+        {
+          headers: { Authorization: token },
+        }
       );
       console.log(res.data);
+      handleGetsales();
     } catch (error) {
       console.log(error);
     }

@@ -6,22 +6,48 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddExpense } from "../../Components/ManageExpense/AddExpense";
 import { EditExpense } from "../../Components/ManageExpense/EditExpense";
 import { ViewExpense } from "../../Components/ManageExpense/ViewExpense";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
 const numbers = [10, 25, 50, 10];
 
 type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 export const Expenses = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
   const [isOpenModal, setIsOpenModal] = useState<EXPENSET>("");
 
   const handleToggleViewModal = (active: EXPENSET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const token = currentUser?.token;
+
+  const getAllExpenses = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getExpense`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  
+
+  useEffect(() => {
+    getAllExpenses();
+  }, []);
 
   return (
     <div className="w-full mx-2">

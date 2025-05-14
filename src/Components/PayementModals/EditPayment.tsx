@@ -15,21 +15,29 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
 
+type PAYMENTMETHODT = {
+  id: number;
+  customerName: string;
+  amount: string;
+  paymentType: string;
+  description: string;
+  date: string;
+};
+
 type AddAttendanceProps = {
   setModal: () => void;
+  seletePayment: PAYMENTMETHODT | null;
 };
 
-const initialState = {
-  accountType: "cash",
-  customers: "",
-  description: "",
-  amount: "",
-  date: "",
-};
-export const EditPayment = ({ setModal }: AddAttendanceProps) => {
+export const EditPayment = ({
+  setModal,
+  seletePayment,
+}: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProgress, setAddProgress] = useState(initialState);
+  const [updatePayment, setUpdateProgress] = useState(seletePayment);
+
+  console.log(updatePayment);
 
   const [allUsers, setAllUsers] = useState([]);
 
@@ -42,7 +50,7 @@ export const EditPayment = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddProgress({ ...addProgress, [name]: value });
+    setUpdateProgress({ ...updatePayment, [name]: value } as PAYMENTMETHODT);
   };
 
   const getAllUsers = async () => {
@@ -80,7 +88,7 @@ export const EditPayment = ({ setModal }: AddAttendanceProps) => {
                   name="accountType"
                   className="radio border-gray-500 text-indigo-500"
                   value={"cash"}
-                  checked={addProgress?.accountType === "cash"}
+                  checked={updatePayment?.paymentType === "cash"}
                   onChange={handlerChange}
                 />
                 <label>Cash</label>
@@ -89,7 +97,7 @@ export const EditPayment = ({ setModal }: AddAttendanceProps) => {
                   name="accountType"
                   className="radio border-gray-500 text-indigo-500"
                   value={"bankTransfer"}
-                  checked={addProgress?.accountType === "bankTransfer"}
+                  checked={updatePayment?.paymentType === "bankTransfer"}
                   onChange={handlerChange}
                 />
                 <label>Bank Transfer</label>
@@ -98,8 +106,8 @@ export const EditPayment = ({ setModal }: AddAttendanceProps) => {
             <div className="mx-2 flex-wrap gap-3  ">
               <UserSelect
                 labelName="Customers*"
-                name="customer"
-                value={addProgress.customers}
+                name="customerName"
+                value={updatePayment?.customerName ?? ""}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
@@ -108,21 +116,21 @@ export const EditPayment = ({ setModal }: AddAttendanceProps) => {
                 labelName="Description*"
                 name="description"
                 handlerChange={handlerChange}
-                inputVal={addProgress.description}
+                inputVal={updatePayment?.description ?? ""}
               />
 
               <InputField
                 labelName="Amount*"
                 name="amount"
                 handlerChange={handlerChange}
-                inputVal={addProgress.amount}
+                inputVal={updatePayment?.amount ?? ""}
               />
 
               <InputField
                 labelName="Date*"
                 name="date"
                 handlerChange={handlerChange}
-                inputVal={addProgress.date}
+                inputVal={updatePayment?.date}
               />
             </div>
 

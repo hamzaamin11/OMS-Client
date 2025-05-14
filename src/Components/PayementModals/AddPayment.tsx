@@ -6,7 +6,6 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
 
-import { UserSelect } from "../InputFields/UserSelect";
 
 import axios from "axios";
 
@@ -14,26 +13,37 @@ import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  handleGetPayments: () => void;
+};
+
+type CustomerT = {
+  id: number;
+  customerName: string;
 };
 
 const initialState = {
-  accountType: "cash",
-  customers: "",
+  paymentMethod: "cash",
+  customerId: "",
   description: "",
   amount: "",
   date: "",
 };
-export const AddPayment = ({ setModal }: AddAttendanceProps) => {
+export const AddPayment = ({
+  setModal,
+  handleGetPayments,
+}: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [addProgress, setAddProgress] = useState(initialState);
 
   console.log(addProgress);
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
 
   const token = currentUser?.token;
 
@@ -47,23 +57,42 @@ export const AddPayment = ({ setModal }: AddAttendanceProps) => {
     setAddProgress({ ...addProgress, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllCustomers = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
         headers: {
           Authorization: token,
         },
       });
-      setAllUsers(res?.data?.users);
+      setAllCustomers(res?.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/addPayment`,
+        addProgress,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+      handleGetPayments();
+      toast.success("Payment added successfully");
+      setModal();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    getAllUsers();
+    getAllCustomers();
   }, []);
   return (
     <div>
@@ -79,31 +108,36 @@ export const AddPayment = ({ setModal }: AddAttendanceProps) => {
               <div className=" ml-5 lg:space-x-5 space-x-5">
                 <input
                   type="radio"
-                  name="accountType"
+                  name="paymentMethod"
                   className="radio border-gray-500 text-indigo-500"
                   value={"cash"}
-                  checked={addProgress?.accountType === "cash"}
+                  checked={addProgress?.paymentMethod === "cash"}
                   onChange={handlerChange}
                 />
                 <label>Cash</label>
                 <input
                   type="radio"
-                  name="accountType"
+                  name="paymentMethod"
                   className="radio border-gray-500 text-indigo-500"
                   value={"bankTransfer"}
-                  checked={addProgress?.accountType === "bankTransfer"}
+                  checked={addProgress?.paymentMethod === "bankTransfer"}
                   onChange={handlerChange}
                 />
                 <label>Bank Transfer</label>
               </div>
             </div>
             <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Customers*"
-                name="customer"
-                value={addProgress.customers}
+              <OptionField
+                labelName="Select Customer"
+                name="customerId"
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                value={addProgress.customerId}
+                optionData={allCustomers?.map((customer) => ({
+                  id: customer.id,
+                  label: customer.customerName,
+                  value: customer.id,
+                }))}
+                inital="Please Select Customer"
               />
 
               <InputField
@@ -123,6 +157,7 @@ export const AddPayment = ({ setModal }: AddAttendanceProps) => {
               <InputField
                 labelName="Date*"
                 name="date"
+                type="date"
                 handlerChange={handlerChange}
                 inputVal={addProgress.date}
               />

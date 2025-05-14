@@ -18,19 +18,19 @@ const currentDate =
   new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
 
 const reasonLeaveOption = [
+ 
   {
-    label: "Please Select Status",
-    value: "",
-  },
-  {
+    id: 1,
     label: "Present",
     value: "present",
   },
   {
+    id: 2,
     label: "Absent",
     value: "absent",
   },
   {
+    id: 3,
     label: "Leave",
     value: "leave",
   },
@@ -146,6 +146,7 @@ export const AddAttendance = ({
                 value={addUserAttendance.attendanceStatus}
                 handlerChange={handlerChange}
                 optionData={reasonLeaveOption}
+                inital="Please Select Status"
               />
             </div>
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">

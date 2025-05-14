@@ -70,7 +70,6 @@ export const UsersDetails = () => {
 
   const [allUsers, setAllUsers] = useState<UserType[]>([]);
 
-  console.log("all user", allUsers);
 
   const [selectedValue, setSelectedValue] = useState(10);
 
@@ -81,7 +80,6 @@ export const UsersDetails = () => {
     {} as UserType
   );
 
-  console.log(viewUserDetail, "View");
 
   const [modalTypeTooPen, setModalTypeTooPen] = useState<
     "ADD" | "UPDATE" | "VIEW" | "CONFIRM PASSWORD" | "DELETE" | ""
@@ -285,6 +283,7 @@ export const UsersDetails = () => {
                     ) ?? "",
                   email: editUser?.email ?? "",
                   image: editUser?.image ?? "",
+                  password: editUser?.confirmPassword ?? "",
 
                   role: editUser?.role ?? "",
                 },

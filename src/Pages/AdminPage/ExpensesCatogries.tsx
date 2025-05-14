@@ -5,20 +5,88 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddCategory } from "../../Components/ExpenseCategoryModal/AddCategory";
 import { EditCategory } from "../../Components/ProjectCategoryModal/EditCategory";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 const numbers = [10, 25, 50, 10];
+
 type EXPENSECATEGORYT = "ADD" | "EDIT" | "DELETE" | "";
 
+type AllExpenseCategoryT = {
+  id: number;
+  categoryName: string;
+};
+
 export const ExpensesCatogries = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
   const [isOpenModal, setIsOpenModal] = useState<EXPENSECATEGORYT>("");
+
+  const [catchId, setCatchId] = useState<number>();
+
+  const [allExpenseCategory, setAllExpenseCategory] = useState<
+    AllExpenseCategoryT[] | null
+  >(null);
+
+  const [selectCategory, setSelectCategory] =
+    useState<AllExpenseCategoryT | null>(null);
 
   const handleToggleViewModal = (active: EXPENSECATEGORYT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const handlegetExpenseCategory = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getExpenseCategory`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log(res.data);
+      setAllExpenseCategory(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickEditButton = (data: AllExpenseCategoryT) => {
+    handleToggleViewModal("EDIT");
+    setSelectCategory(data);
+  };
+
+  const handleClickDeleteButton = (id: number) => {
+    handleToggleViewModal("DELETE");
+    setCatchId(id);
+  };
+  const handleDeleteCategory = async () => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/admin/deleteExpenseCategory/${catchId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      toast.info("Category has been deleted successfully");
+      console.log(res.data);
+      handlegetExpenseCategory();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    handlegetExpenseCategory();
+  }, []);
   return (
     <div className="w-full mx-2">
       <TableTitle
@@ -58,17 +126,24 @@ export const ExpensesCatogries = () => {
             <span className="p-2  min-w-[150px]">Category Name</span>
             <span className="p-2 text-left min-w-[150px]">Action</span>
           </div>
-          <div className="grid grid-cols-3 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">react js</span>
-            <span className="p-2 flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+          {allExpenseCategory?.map((category, index) => (
+            <div
+              className="grid grid-cols-3 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={category.id}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{category.categoryName}</span>
+              <span className="p-2 flex items-center  gap-1">
+                <EditButton
+                  handleUpdate={() => handleClickEditButton(category)}
+                />
 
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+                <DeleteButton
+                  handleDelete={() => handleClickDeleteButton(category.id)}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -82,14 +157,19 @@ export const ExpensesCatogries = () => {
       )}
 
       {isOpenModal === "EDIT" && (
-        <EditCategory setModal={() => handleToggleViewModal("")} />
+        <EditCategory
+          setModal={() => handleToggleViewModal("")}
+          selectCategory={selectCategory}
+          getAllCategories={handlegetExpenseCategory}
+        />
       )}
 
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
           onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleToggleViewModal("")}
+          onConfirm={() => handleDeleteCategory()}
+          message="Are you sure to want delete this category?"
         />
       )}
     </div>

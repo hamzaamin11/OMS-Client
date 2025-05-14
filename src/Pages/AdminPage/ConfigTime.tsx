@@ -5,20 +5,86 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddConfigTime } from "../../Components/ConfigTimeModal/AddConfigTime";
 import { EditConfigTime } from "../../Components/ConfigTimeModal/EditConfigTime";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 const numbers = [10, 25, 50, 10];
 
 type CONFIGTIMET = "ADD" | "EDIT" | "DELETE" | "";
+
+type ALLCONFIGT = {
+  id: number;
+  configureType: string;
+  configureTime: string;
+};
 export const ConfigTime = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
   const [isOpenModal, setIsOpenModal] = useState<CONFIGTIMET>("");
+
+  const [allConfig, setAllConfig] = useState<ALLCONFIGT[] | null>(null);
+
+  const [selectData, setSelectData] = useState<ALLCONFIGT | null>(null);
+
+  const [catchId, setCatchId] = useState<number>();
+
+  const token = currentUser?.token;
 
   const handleToggleViewModal = (active: CONFIGTIMET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const handleGetAllTimeConfig = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getTimeConfigured`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllConfig(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickEditButton = (data: ALLCONFIGT) => {
+    handleToggleViewModal("EDIT");
+    setSelectData(data);
+  };
+
+  const handleClickDeleteButton = (id: number) => {
+    handleToggleViewModal("DELETE");
+    setCatchId(id);
+  };
+
+  const handleDeleteConfigTime = async () => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/admin/deleteTime/${catchId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      handleGetAllTimeConfig();
+      toast.info("Time Configuration has been deleted");
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllTimeConfig();
+  }, []);
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Configure Time" activeFile="Late List" />
@@ -28,7 +94,7 @@ export const ConfigTime = () => {
           <span>
             Total Number of Configure Time :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+              {allConfig?.length}
             </span>
           </span>
           <CustomButton
@@ -57,17 +123,32 @@ export const ConfigTime = () => {
             <span className="p-2 text-left min-w-[150px] ">Type</span>
             <span className="p-2 text-left min-w-[150px] ">Action</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">12:00PM</span>
-            <span className=" p-2 text-left  ">Absent</span>
-            <span className="p-2 flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+          {allConfig?.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-2 ">
+              No records available at the moment!
+            </div>
+          ) : (
+            allConfig?.map((config, index) => (
+              <div
+                className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                key={config.id}
+              >
+                <span className=" p-2 text-left ">{index + 1}</span>
+                <span className=" p-2 text-left   ">
+                  {config.configureTime ?? "guest"}
+                </span>
+                <span className=" p-2 text-left  ">{config.configureType}</span>
+                <span className="p-2 flex items-center  gap-1">
+                  <EditButton
+                    handleUpdate={() => handleClickEditButton(config)}
+                  />
+                  <DeleteButton
+                    handleDelete={() => handleClickDeleteButton(config.id)}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -76,18 +157,25 @@ export const ConfigTime = () => {
         <Pagination />
       </div>
       {isOpenModal === "ADD" && (
-        <AddConfigTime setModal={() => handleToggleViewModal("")} />
+        <AddConfigTime
+          setModal={() => handleToggleViewModal("")}
+          handleGetAllTimeConfig={handleGetAllTimeConfig}
+        />
       )}
 
       {isOpenModal === "EDIT" && (
-        <EditConfigTime setModal={() => handleToggleViewModal("")} />
+        <EditConfigTime
+          setModal={() => handleToggleViewModal("")}
+          handleGetAllTimeConfig={handleGetAllTimeConfig}
+          selectData={selectData}
+        />
       )}
 
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
           onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleToggleViewModal("")}
+          onConfirm={() => handleDeleteConfigTime()}
         />
       )}
     </div>

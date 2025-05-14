@@ -3,16 +3,23 @@ import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
 type AddAttendanceProps = {
   setModal: () => void;
 };
 
 const initialState = {
-  expenseCategory: "",
+  categoryName: "",
 };
 
 export const AddCategory = ({ setModal }: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
   const [addCategory, setAddCategory] = useState(initialState);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +28,23 @@ export const AddCategory = ({ setModal }: AddAttendanceProps) => {
     setAddCategory({ ...addCategory, [name]: value.trim() });
   };
 
-  console.log("submitted", addCategory);
-
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/createExpenseCatagory`,
+        addCategory,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -34,8 +55,8 @@ export const AddCategory = ({ setModal }: AddAttendanceProps) => {
             <div className="mx-2   flex-wrap gap-3  ">
               <InputField
                 labelName="Expense Category*"
-                name="expenseCategory"
-                inputVal={addCategory.expenseCategory}
+                name="categoryName"
+                inputVal={addCategory.categoryName}
                 handlerChange={handlerChange}
               />
             </div>
