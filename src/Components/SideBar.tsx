@@ -9,7 +9,6 @@ import { GoProjectRoadmap } from "react-icons/go";
 import { LuListTodo } from "react-icons/lu";
 import { CiCalculator2 } from "react-icons/ci";
 import { LiaProjectDiagramSolid } from "react-icons/lia";
-import { BsChatDots } from "react-icons/bs";
 import { RiRecycleLine } from "react-icons/ri";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { CgCalculator } from "react-icons/cg";
@@ -48,7 +47,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
   useEffect(() => {
     if (!isOpen) setActiveBtns("");
     setActiveBtns("Dashboard");
-    navigate("/admin/dashboard");
+    navigate("/");
   }, [isOpen]);
 
   return (
@@ -60,7 +59,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     >
       {!isOpen ? (
         <Link
-          to={"/admin/dashBoard"}
+          to={"/"}
           onClick={() => setActiveBtns("Dashboard")}
           className={`flex items-center ${
             isOpen && "justify-between "
@@ -89,7 +88,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         activeBtns={activeBtns}
         activeBtn="People"
       />
-      <div className="">
+      <div>
         {activeBtns === "People" && (
           <AccordionItem isOpen={isOpen}>
             <div className="flex flex-col items-start justify-start">
@@ -335,26 +334,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           </AccordionItem>
         )}
       </div>
-      <SideBarButton
-        isOpen={isOpen}
-        icon={<BsChatDots size={20} />}
-        title={"Chat"}
-        arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("Chat")}
-        activeBtns={activeBtns}
-        activeBtn="Chat"
-      />
-      <div>
-        {activeBtns === "Chat" && (
-          <AccordionItem isOpen={isOpen}>
-            <ul className="flex flex-col ">
-              <Link className="my-button" to={"/communication"}>
-                Communication
-              </Link>
-            </ul>
-          </AccordionItem>
-        )}
-      </div>
+
       <SideBarButton
         isOpen={isOpen}
         icon={<RiRecycleLine size={20} />}
@@ -519,6 +499,9 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           </AccordionItem>
         )}
       </div>
+      <Link className="text-gray-900" to={"/User/dashboard"}>
+        Swtich
+      </Link>
     </div>
   );
 };

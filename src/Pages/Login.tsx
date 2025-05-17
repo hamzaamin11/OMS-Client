@@ -33,7 +33,7 @@ export const Login = () => {
   }, []);
 
   if (currentUser?.role === "admin")
-    return <Navigate to={"/Admin/dashboard"} />;
+    return <Navigate to={"/"} />;
   if (currentUser?.role === "user") return <Navigate to={"/User/dashboard"} />;
 
   if (loader) return <Loader />;

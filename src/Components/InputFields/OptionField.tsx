@@ -30,7 +30,7 @@ export const OptionField = ({
         value={value}
         onChange={handlerChange}
         name={name}
-        className="p-1 rounded bg-white text-gray-800  border border-gray-300 focus:outline-indigo-500"
+        className="p-1 py-2 rounded bg-white text-gray-800  border border-gray-300 focus:outline-indigo-500"
       >
         <option value={""}>{inital}</option>
         {optionData?.map((options, index) => (

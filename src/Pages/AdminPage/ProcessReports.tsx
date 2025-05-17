@@ -41,7 +41,6 @@ export const ProcessReports = () => {
     `;
 
     const content = document.getElementById("myDiv")?.outerHTML || "";
-    const originalContent = document.body.innerHTML;
 
     document.body.innerHTML = `
       <div class="print-container">
@@ -64,12 +63,7 @@ export const ProcessReports = () => {
     document.head.appendChild(style);
 
     window.print();
-
-    window.onafterprint = () => {
-      document.body.innerHTML = originalContent;
-      document.head.removeChild(style);
-      location.reload(); // restore full page
-    };
+    location.reload(); // restore full pag
   };
 
   return (
@@ -149,7 +143,7 @@ export const ProcessReports = () => {
             <span className="p-2 text-left">Jamat Project</span>
             <span className="p-2 text-left">2025-01-8</span>
             <span className="p-2 text-left">2025-04-28</span>
-            <span className="p-2 text-left " >Complete</span>
+            <span className="p-2 text-left ">Complete</span>
             <span className="p-2 text-left">2025-05-28</span>
           </div>
         </div>

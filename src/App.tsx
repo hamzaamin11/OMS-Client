@@ -20,7 +20,6 @@ import { Quotation } from "./Pages/AdminPage/Quotation";
 import { Payments } from "./Pages/AdminPage/Payments";
 import { Expenses } from "./Pages/AdminPage/Expenses";
 import { ExpensesCatogries } from "./Pages/AdminPage/ExpensesCatogries";
-import { Communication } from "./Pages/AdminPage/Communication";
 import { Calendar } from "./Pages/AdminPage/Calendar";
 import { SalaryCycle } from "./Pages/AdminPage/SalaryCycle";
 import { ConfigEmpSalary } from "./Pages/AdminPage/ConfigEmpSalary";
@@ -34,6 +33,8 @@ import { PaymentsReports } from "./Pages/AdminPage/PaymentsReports";
 import { ExpenseReports } from "./Pages/AdminPage/ExpenseReports";
 import { Profile } from "./Pages/AdminPage/Profile";
 import { PrivateRoute } from "./Components/PrivateRouteHOC/PrivateRoute";
+import { EmployeePrivateLayout } from "./Components/HOC/PrivateLayout/EmployeePrivateLayout";
+import { EmployeeDashborad } from "./Components/Employee/EmployeeDashborad";
 
 function App() {
   return (
@@ -41,13 +42,23 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         {/* {All Admin Routes deffine here } */}
+
         <Route element={<PrivateRoute />}>
           <Route
-            path="/admin/dashboard"
+            path="/"
             element={
               <PrivateLayout>
                 <AdminDashboard />
               </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/User/dashboard"
+            element={
+              <EmployeePrivateLayout>
+                <EmployeeDashborad />
+              </EmployeePrivateLayout>
             }
           />
 
@@ -76,6 +87,7 @@ function App() {
               </PrivateLayout>
             }
           />
+
           <Route
             path="/markAttendance"
             element={
@@ -84,6 +96,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/markAttendance"
+            element={
+              <EmployeePrivateLayout>
+                <MarkAttendance />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/usersAttendance"
             element={
@@ -100,6 +122,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/leaveRequests"
+            element={
+              <EmployeePrivateLayout>
+                <LeaveRequests />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/holidays"
             element={
@@ -140,6 +172,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/assignedprojects"
+            element={
+              <EmployeePrivateLayout>
+                <AssignProjects />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/todo"
             element={
@@ -148,6 +190,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/todo"
+            element={
+              <EmployeePrivateLayout>
+                <Todo />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/progress"
             element={
@@ -156,6 +208,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/progress"
+            element={
+              <EmployeePrivateLayout>
+                <Progress />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/sales"
             element={
@@ -196,14 +258,7 @@ function App() {
               </PrivateLayout>
             }
           />
-          <Route
-            path="/communication"
-            element={
-              <PrivateLayout>
-                <Communication />
-              </PrivateLayout>
-            }
-          />
+
           <Route
             path="/calendar"
             element={
@@ -260,6 +315,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="users/progressReports"
+            element={
+              <EmployeePrivateLayout>
+                <ProgressReports />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/attendanceReports"
             element={
@@ -268,6 +333,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/attendanceReports"
+            element={
+              <EmployeePrivateLayout>
+                <AttendanceReports />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/taskReports"
             element={
@@ -276,6 +351,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/users/taskReports"
+            element={
+              <EmployeePrivateLayout>
+                <ProcessReports />
+              </EmployeePrivateLayout>
+            }
+          />
+
           <Route
             path="/paymentReports"
             element={

@@ -1,15 +1,24 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { AiTwotoneEdit } from "react-icons/ai";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { useState } from "react";
+import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
 
 const numbers = [10, 25, 50, 100];
+
+type QuotationT = "ADD" | "VIEW" | "EDIT" | "";
 export const Quotation = () => {
+  const [isOpenModal, setIsOpenModal] = useState<QuotationT>("");
+
+  const handleToggleViewModal = (active: QuotationT) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Quotation" activeFile="All Quotation list" />
@@ -23,7 +32,7 @@ export const Quotation = () => {
           </span>
           <CustomButton
             label="Add Quotation"
-            // handleToggle={() => handleToggleViewModal("ADDATTENDANCE")}
+            handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
@@ -41,24 +50,20 @@ export const Quotation = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Date</span>
-            <span className="p-2 text-left min-w-[150px] ">Users</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock In</span>
-            <span className="p-2 text-left min-w-[150px] ">Clock Out</span>
-            <span className="p-2 text-left min-w-[150px] ">Day</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2  min-w-[50px]">Sr</span>
+            <span className="p-2 text-left min-w-[150px] ">Ref</span>
+            <span className="p-2 text-left min-w-[150px] ">Customer</span>
+            <span className="p-2 text-left min-w-[150px] ">Actions</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
+          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
             <span className=" p-2 text-left ">1</span>
             <span className=" p-2 text-left   ">Hamza amin</span>
             <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
             <span className="p-2 flex items-center  gap-1">
-              <EditButton />
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 
-              <DeleteButton />
+              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
             </span>
           </div>
         </div>
@@ -68,6 +73,13 @@ export const Quotation = () => {
         <ShowDataNumber start={1} total={10} end={1 + 9} />
         <Pagination />
       </div>
+
+      {isOpenModal === "ADD" && (
+        <AddQuotation setModal={() => handleToggleViewModal("")} />
+      )}
+      {isOpenModal === "EDIT" && (
+        <EditQuotation setModal={() => handleToggleViewModal("")} />
+      )}
     </div>
   );
 };

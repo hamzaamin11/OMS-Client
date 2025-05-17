@@ -1,26 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { OptionField } from "../../Components/InputFields/OptionField";
 
-const itemsPerPageOptions = [10, 25, 50];
+type CustomerT = {
+  id: number;
+  customerName: string;
+};
 
 export const SalesReports = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
+  const [getCustomers, setGetCustomers] = useState<CustomerT[] | null>(null);
+
   const currentDate = new Date().toISOString().split("T")[0]; // ISO formatted date
 
   const initialState = {
     startDate: currentDate,
     endDate: currentDate,
-    selectCustomer: "",
+    customerName: "",
   };
 
   const [reportData, setReportData] = useState(initialState);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleGetALLCustomers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setGetCustomers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const printDiv = () => {
@@ -41,7 +69,6 @@ export const SalesReports = () => {
     `;
 
     const content = document.getElementById("myDiv")?.outerHTML || "";
-    const originalContent = document.body.innerHTML;
 
     document.body.innerHTML = `
       <div class="print-container">
@@ -64,33 +91,18 @@ export const SalesReports = () => {
     document.head.appendChild(style);
 
     window.print();
-
-    window.onafterprint = () => {
-      document.body.innerHTML = originalContent;
-      document.head.removeChild(style);
-      location.reload(); // restore full page
-    };
+    location.reload(); // restore full pag
   };
-
+  useEffect(() => {
+    handleGetALLCustomers();
+  }, []);
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sales Report" activeFile="Sales Report" />
 
       {/* Top Controls */}
       <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
-        <div>
-          <span>Show</span>
-          <span className="bg-gray-200 rounded mx-1 p-1">
-            <select>
-              {itemsPerPageOptions.map((num, index) => (
-                <option key={index} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-          </span>
-          <span>entries</span>
-        </div>
+        <div></div>
         <TableInputField />
       </div>
 
@@ -112,7 +124,18 @@ export const SalesReports = () => {
               handlerChange={handleChange}
               name="endDate"
             />
-            <InputField labelName="Customers" />
+            <OptionField
+              labelName="Customer"
+              name="customerName"
+              value={reportData.customerName}
+              optionData={getCustomers?.map((customer) => ({
+                id: customer.id,
+                label: customer.customerName,
+                value: customer.id,
+              }))}
+              inital="Please Select Customer"
+              handlerChange={handleChange}
+            />
             <div className="mt-6">
               <button className="bg-indigo-500 text-white py-1 px-6 rounded hover:cursor-pointer hover:scale-105 duration-300">
                 Search
@@ -130,7 +153,10 @@ export const SalesReports = () => {
         </div>
 
         {/* Report Table */}
-        <div id="myDiv" className="w-full max-h-[28.6rem] overflow-hidden mx-auto">
+        <div
+          id="myDiv"
+          className="w-full max-h-[28.6rem] overflow-hidden mx-auto"
+        >
           <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500">
             <span className="p-2 min-w-[50px]">Sr#</span>
             <span className="p-2 text-left min-w-[150px]">Customer</span>
