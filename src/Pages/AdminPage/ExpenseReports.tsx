@@ -41,7 +41,6 @@ export const ExpenseReports = () => {
     `;
 
     const content = document.getElementById("myDiv")?.outerHTML || "";
-    const originalContent = document.body.innerHTML;
 
     document.body.innerHTML = `
       <div class="print-container">
@@ -64,12 +63,7 @@ export const ExpenseReports = () => {
     document.head.appendChild(style);
 
     window.print();
-
-    window.onafterprint = () => {
-      document.body.innerHTML = originalContent;
-      document.head.removeChild(style);
-      location.reload(); // restore full page
-    };
+    location.reload(); // restore full pag
   };
 
   return (

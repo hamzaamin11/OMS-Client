@@ -3,7 +3,7 @@ import { FiUser, FiLock, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useAppDispatch } from "../../redux/Hooks";
 import { logOut, resetStore } from "../../redux/UserSlice";
-import { ProfileChangePassword } from "./ProfileChangePassword";
+
 
 const ProfileDropdown = ({
   isOpenModal,

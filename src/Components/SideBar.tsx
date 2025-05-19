@@ -499,9 +499,6 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           </AccordionItem>
         )}
       </div>
-      <Link className="text-gray-900" to={"/User/dashboard"}>
-        Swtich
-      </Link>
     </div>
   );
 };

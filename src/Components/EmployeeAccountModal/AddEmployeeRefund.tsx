@@ -14,6 +14,7 @@ import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
 
 type AddAttendanceProps = {
   setModal: () => void;
@@ -21,18 +22,13 @@ type AddAttendanceProps = {
 
 const data = [
   {
-    label: "Select One Method",
-    value: "",
-  },
-  {
+    id: 1,
     label: "EasyPaisy",
     value: "easyPaisy",
   },
+  { id: 2, label: "Bank Transfer", value: "bankTransfer" },
   {
-    label: "Bank Transfer",
-    value: "bankTransfer",
-  },
-  {
+    id: 3,
     label: "Cash",
     value: "cash",
   },
@@ -142,12 +138,17 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 inputVal={addConfigEmployee.withdrawAccount}
               />
 
-              <UserSelect
+              <OptionField
                 labelName="Payment Method*"
                 name="paymentMethod"
                 value={addConfigEmployee.paymentMethod}
                 handlerChange={handlerChange}
-                optionData={data}
+                optionData={data.map((data) => ({
+                  id: data.id,
+                  label: data.label,
+                  value: data.value,
+                }))}
+                inital="Please Select"
               />
 
               <InputField

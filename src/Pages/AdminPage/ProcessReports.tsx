@@ -65,7 +65,6 @@ export const ProcessReports = () => {
     window.print();
     location.reload(); // restore full pag
   };
-
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Task Report" activeFile="Sales Report" />

@@ -10,7 +10,7 @@ type OptionFieldProps = {
   handlerChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   name: string;
   value: string;
-  optionData: option[] | undefined | null;
+  optionData: option[] | null;
 };
 
 export const UserSelect = ({

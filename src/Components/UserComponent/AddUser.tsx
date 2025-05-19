@@ -58,14 +58,12 @@ const initialState: IAddUserValues = {
 
 const optionData = [
   {
-    label: "Please Select ",
-    value: "",
-  },
-  {
+    id: 1,
     label: "Admin",
     value: "admin",
   },
   {
+    id: 2,
     label: "Employee",
     value: "user",
   },
@@ -291,11 +289,12 @@ export const AddUser = ({
               inputVal={image || "gag"}
             /> */}
             <OptionField
-              Value={userData?.role}
+              value={userData?.role}
               labelName="Role*"
               handlerChange={handlerChange}
               name="role"
               optionData={optionData}
+              inital="Plese Select User"
             />
           </div>
           <div className="flex items-center  justify-center m-2 gap-2 text-xs ">

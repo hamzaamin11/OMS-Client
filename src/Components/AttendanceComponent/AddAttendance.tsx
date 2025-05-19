@@ -68,7 +68,6 @@ export const AddAttendance = ({
           Authorization: token,
         },
       });
-      console.log(res?.data?.users, "<=>");
       setAllUsers(res?.data?.users);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;

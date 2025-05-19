@@ -1,47 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
 import { Title } from "../Title";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { UserSelect } from "../InputFields/UserSelect";
 type UpdateAttendanceT = {
-  [key: string]: string;
+  id: number;
+  attendanceStatus: string; // e.g., "Present"
+  clockIn: string; // e.g., "14:38:00"
+  clockOut: string; // e.g., "14:49:12"
+  date: string; // ISO date format string e.g., "2025-03-07T00:00:00.000Z"
+  day: string; // e.g., "Friday"
+  leaveApprovalStatus: string | null; // null if no leave
+  leaveReason: string | null; // null if no leave reason
+  name: string; // e.g., "Alice Johnson"
+  role: string; // e.g., "admin"
+  status: string; // e.g., "Y"
+  userId: number; // e.g., 1 (number type)
+  workingHours: string; // e.g., "11 Minutes"
 };
+
 type AddAttendanceProps = {
   setModal: () => void;
-  updatedAttendance: UpdateAttendanceT;
-  selectUser: string;
-  date: string;
-  clockIn: string;
-  clockOut: string;
-  attendanceStatus: string;
+  updatedAttendance: UpdateAttendanceT | null;
 };
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
-
-const optionData = [
-  { label: "Select Please User", value: "" },
-  { label: "Hamza", value: "hamza" },
-  {
-    label: "Danish",
-    value: "danish",
-  },
-  {
-    label: "Hadeed",
-    value: "hadeed",
-  },
-];
 
 const reasonLeaveOption = [
   {
+    id: 1,
     label: "Present",
     value: "present",
   },
   {
+    id: 2,
     label: "Absent",
     value: "absent",
   },
   {
+    id: 3,
     label: "Leave",
     value: "leave",
   },
@@ -51,18 +52,43 @@ export const UpdateAttendance = ({
   setModal,
   updatedAttendance,
 }: AddAttendanceProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
   const [addUserAttendance, setAddUserAttendance] =
     useState<UpdateAttendanceT | null>(updatedAttendance);
+
+  const [allUsers, setAllUsers] = useState([]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddUserAttendance({ ...addUserAttendance, [name]: value.trim() });
+    setAddUserAttendance({
+      ...addUserAttendance,
+      [name]: value,
+    } as UpdateAttendanceT);
   };
 
-  console.log("submitted", addUserAttendance);
+  const handlerGetUsers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllUsers(res?.data?.users);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError?.response?.data?.message);
+    }
+  };
+  useEffect(() => {
+    handlerGetUsers();
+  }, []);
+
   const handlerSubmitted = async () => {};
   return (
     <div>
@@ -71,12 +97,12 @@ export const UpdateAttendance = ({
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Update Attendance</Title>
             <div className="mx-2   flex-wrap gap-3  ">
-              <OptionField
+              <UserSelect
                 labelName="Select User*"
                 name="selectUser"
                 value={addUserAttendance?.name ?? ""}
                 handlerChange={handlerChange}
-                optionData={optionData}
+                optionData={allUsers}
               />
               <InputField
                 labelName="Date*"
@@ -111,6 +137,7 @@ export const UpdateAttendance = ({
                 value={addUserAttendance?.attendanceStatus ?? ""}
                 handlerChange={handlerChange}
                 optionData={reasonLeaveOption}
+                inital="Please Select Reason"
               />
             </div>
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">

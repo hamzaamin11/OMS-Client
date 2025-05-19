@@ -9,7 +9,13 @@ import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
 // const currentDate = new Date().toISOString().split("T")[0];
 type CustomerT = {
-  [key: string]: string;
+  id: number;
+  customerStatus: string;
+  customerName: string;
+  customerAddress: string;
+  customerContact: string;
+  companyName: string;
+  companyAddress: string;
 };
 type AddCustomerProps = {
   setIsOpenModal: () => void;
@@ -29,12 +35,12 @@ export const UpdateCustomer = ({
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setCustomerData({ ...customerData, [name]: value.trim() });
+    setCustomerData({ ...customerData, [name]: value } as CustomerT);
   };
 
   const handlerSubmitted = async (
     e: React.FormEvent<HTMLFormElement>,
-    customerId: string
+    customerId: number | null
   ) => {
     e.preventDefault();
     try {
@@ -59,7 +65,7 @@ export const UpdateCustomer = ({
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
-        <form onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? "")}>
+        <form onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}>
           <Title setModal={() => setIsOpenModal()}>Update Customer</Title>
           <div className="mx-2  flex-wrap gap-3  ">
             <InputField

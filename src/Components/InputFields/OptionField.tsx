@@ -33,8 +33,8 @@ export const OptionField = ({
         className="p-1 py-2 rounded bg-white text-gray-800  border border-gray-300 focus:outline-indigo-500"
       >
         <option value={""}>{inital}</option>
-        {optionData?.map((options, index) => (
-          <option value={options.value} key={index}>
+        {optionData?.map((options) => (
+          <option value={options.value} key={options.id}>
             {options.label}
           </option>
         ))}

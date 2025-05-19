@@ -41,13 +41,12 @@ export const AttendanceReports = () => {
     `;
 
     const content = document.getElementById("myDiv")?.outerHTML || "";
-    const originalContent = document.body.innerHTML;
 
     document.body.innerHTML = `
       <div class="print-container">
         <div class="print-header">
           <h1>Office Management System</h1>
-          <h2>Progress Report</h2>
+          <h2>Sales Report</h2>
         </div>
         <div class="date-range">
           <strong>From: ${reportData.startDate}</strong>
@@ -64,17 +63,15 @@ export const AttendanceReports = () => {
     document.head.appendChild(style);
 
     window.print();
-
-    window.onafterprint = () => {
-      document.body.innerHTML = originalContent;
-      document.head.removeChild(style);
-      location.reload(); // restore full page
-    };
+    location.reload(); // restore full pag
   };
 
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Attendance Report" activeFile="Attendance Report list" />
+      <TableTitle
+        tileName="Attendance Report"
+        activeFile="Attendance Report list"
+      />
 
       {/* Top Controls */}
       <div className="flex items-center justify-between text-gray-800 py-2 mx-2">

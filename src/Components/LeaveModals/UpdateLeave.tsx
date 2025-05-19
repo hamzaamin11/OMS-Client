@@ -11,9 +11,9 @@ type AddAttendanceProps = {
   setModal: () => void;
 };
 const optionData = [
-  { label: "Pending", value: "pending" },
-  { label: "Approved", value: "approved" },
-  { label: "Rejected", value: "rejected" },
+  { id: 1, label: "Pending", value: "pending" },
+  { id: 2, label: "Approved", value: "approved" },
+  { id: 3, label: "Rejected", value: "rejected" },
 ];
 const currentDate =
   new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
@@ -80,6 +80,7 @@ export const UpdateLeave = ({ setModal }: AddAttendanceProps) => {
                 value={updateLeave.status}
                 handlerChange={handlerChange}
                 optionData={optionData}
+                inital="Please Select"
               />
             </div>
 

@@ -15,11 +15,17 @@ import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
 
 const numbers = [10, 25, 50, 10];
 
 type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE";
 export const LeaveRequests = () => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const token = currentUser?.token;
+
   const { loader } = useAppSelector((state) => state.NavigateSate);
 
   const dispatch = useAppDispatch();
@@ -30,6 +36,20 @@ export const LeaveRequests = () => {
   const handleToggleViewModal = (active: ISOPENMODALT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  const handleGetAllLeaves = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getUsersLeaves`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     document.title = "(OMS) USER LEAVE";
     dispatch(navigationStart());
@@ -37,6 +57,9 @@ export const LeaveRequests = () => {
       dispatch(navigationSuccess("leaveList"));
     }, 1000);
   }, [dispatch]);
+  useEffect(() => {
+    handleGetAllLeaves();
+  }, []);
 
   if (loader) return <Loader />;
   return (
@@ -101,7 +124,7 @@ export const LeaveRequests = () => {
         <UpdateLeave setModal={() => setIsOpenModal("")} />
       )}
       {isOpenModal === "VIEW" && (
-        <ViewLeave setIsOpenModal={() => setIsOpenModal("")}   />
+        <ViewLeave setIsOpenModal={() => setIsOpenModal("")} />
       )}
     </div>
   );
