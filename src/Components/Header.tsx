@@ -54,9 +54,6 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
             {isOpen ? <RxHamburgerMenu /> : <BsThreeDotsVertical />}
           </button>
         </div>
-        <h1 className="text-white text-2xl">
-          Welcome To Technic Mentors(Office Management System)
-        </h1>
 
         <div className="flex items-center justify-center gap-2">
           <span className="text-white text-xs">{showTime}</span>

@@ -46,6 +46,22 @@ export const Holidays = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<THOLIDAYMODAL>("");
 
+  const [selectedValue, setSelectedValue] = useState(10);
+
+  const [pageNo, setPageNo] = useState(1);
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
+  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(Number(e.target.value));
+  };
+
   const handleToggleViewModal = (active: THOLIDAYMODAL) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
@@ -121,9 +137,11 @@ export const Holidays = () => {
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
-                {numbers.map((num) => (
-                  <option key={num}>{num}</option>
+              <select value={selectedValue} onChange={handleChangeShowData}>
+                {numbers.map((num, index) => (
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </span>
@@ -158,7 +176,11 @@ export const Holidays = () => {
       </div>
       <div className="flex items-center justify-between">
         <ShowDataNumber />
-        <Pagination />
+        <Pagination
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
       {isOpenModal === "ADDHOLIDAY" && (
         <AddHoliday

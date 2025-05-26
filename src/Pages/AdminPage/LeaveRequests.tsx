@@ -18,7 +18,15 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 
-const numbers = [10, 25, 50, 10];
+const numbers = [10, 25, 50, 100];
+
+type ADDLEAVET = {
+  id: number;
+  attendanceStatus: string;
+  date: string;
+  leaveApprovalStatus: string;
+  name: string;
+};
 
 type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE";
 export const LeaveRequests = () => {
@@ -32,9 +40,33 @@ export const LeaveRequests = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<ISOPENMODALT | "">("");
 
-  console.log("isOpen =>", isOpenModal);
+  const [EditLeave, setEditLeave] = useState<ADDLEAVET | null>(null);
+
+  const [allLeaves, setAllLeaves] = useState<ADDLEAVET[] | null>(null);
+
+  const [selectedValue, setSelectedValue] = useState(10);
+
+  const [pageNo, setPageNo] = useState(1);
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
   const handleToggleViewModal = (active: ISOPENMODALT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
+  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(Number(e.target.value));
+  };
+
+  const handleClickEditButton = (data: ADDLEAVET) => {
+    handleToggleViewModal("UPDATE");
+    setEditLeave(data);
   };
 
   const handleGetAllLeaves = async () => {
@@ -44,7 +76,7 @@ export const LeaveRequests = () => {
           Authorization: token,
         },
       });
-      console.log(res.data);
+      setAllLeaves(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -82,9 +114,11 @@ export const LeaveRequests = () => {
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
+              <select value={selectedValue} onChange={handleChangeShowData}>
                 {numbers.map((num, index) => (
-                  <option key={index}>{num}</option>
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </span>
@@ -93,35 +127,48 @@ export const LeaveRequests = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2 text-left min-w-[150px] ">Sr.</span>
             <span className="p-2 text-left min-w-[150px] ">Employee Name</span>
             <span className="p-2 text-left min-w-[150px]  ">Subject Leave</span>
             <span className="p-2 text-left min-w-[150px]  ">Status</span>
             <span className="p-2 text-left min-w-[150px]  ">Action</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className="p-2 text-left    ">Hamza amin</span>
-            <span className="p-2 text-left   ">stick</span>
-            <span className="p-2 text-left  ">pending</span>
 
-            <span className="p-2 text-left flex items-center gap-1  ">
-              <EditButton
-                handleUpdate={() => handleToggleViewModal("UPDATE")}
-              />
-              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
-            </span>
-          </div>
+          {allLeaves?.map((leave, index) => (
+            <div
+              className="grid grid-cols-5 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={leave.id}
+            >
+              <span className="p-2 text-left    ">{index + 1}</span>
+              <span className="p-2 text-left    ">{leave.name}</span>
+              <span className="p-2 text-left   ">{leave.attendanceStatus}</span>
+              <span className="p-2 text-left  ">pending</span>
+
+              <span className="p-2 text-left flex items-center gap-1  ">
+                <EditButton handleUpdate={() => handleClickEditButton(leave)} />
+                <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
       {isOpenModal === "ADDLEAVE" && (
         <AddLeave setModal={() => setIsOpenModal("")} />
       )}
       {isOpenModal === "UPDATE" && (
-        <UpdateLeave setModal={() => setIsOpenModal("")} />
+        <UpdateLeave
+          setModal={() => setIsOpenModal("")}
+          EditLeave={EditLeave}
+        />
       )}
       {isOpenModal === "VIEW" && (
         <ViewLeave setIsOpenModal={() => setIsOpenModal("")} />

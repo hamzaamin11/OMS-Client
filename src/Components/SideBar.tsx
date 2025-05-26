@@ -7,13 +7,14 @@ import { FaUser, FaUserFriends } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
 import { LuListTodo } from "react-icons/lu";
-import { CiCalculator2 } from "react-icons/ci";
+import { CiCalculator2, CiCreditCard1 } from "react-icons/ci";
 import { LiaProjectDiagramSolid } from "react-icons/lia";
-import { RiRecycleLine } from "react-icons/ri";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { CgCalculator } from "react-icons/cg";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineDashboard } from "react-icons/md";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { RiUserCommunityLine } from "react-icons/ri";
 type SideBarProps = {
   isOpen: boolean;
 };
@@ -23,11 +24,13 @@ type TActivButton =
   | "Attendance"
   | "Employee"
   | "AssignProjects"
-  | "Todo"
+  | "Performance"
   | "Sale"
   | "manageExpense"
   | "Chat"
-  | "monthlyAccount"
+  | "payroll"
+  | "Recuritment"
+  | "Dynamic"
   | "configureTime"
   | "Accounts"
   | "Reports";
@@ -100,6 +103,16 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
               >
                 User
               </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/employeeLifeline" && "bg-indigo-200"
+                } `}
+                to={"/employeeLifeline"}
+              >
+                Employee Lifeline
+              </Link>
+
               <Link
                 className={`my-button ${
                   pathname === "/customers" && "bg-indigo-200"
@@ -230,14 +243,14 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
       <SideBarButton
         isOpen={isOpen}
         icon={<LuListTodo size={20} />}
-        title={"Todo's"}
+        title={"Performance"}
         arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("Todo")}
+        handlerClick={() => toggleButtonActive("Performance")}
         activeBtns={activeBtns}
-        activeBtn="Todo"
+        activeBtn="Performance"
       />
       <div>
-        {activeBtns === "Todo" && (
+        {activeBtns === "Performance" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
               <Link
@@ -337,15 +350,15 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
 
       <SideBarButton
         isOpen={isOpen}
-        icon={<RiRecycleLine size={20} />}
-        title={"Monthly Cycle Account"}
+        icon={<CiCreditCard1 size={20} />}
+        title={"Payroll"}
         arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("monthlyAccount")}
+        handlerClick={() => toggleButtonActive("payroll")}
         activeBtns={activeBtns}
-        activeBtn="monthlyAccount"
+        activeBtn="payroll"
       />
       <div>
-        {activeBtns === "monthlyAccount" && (
+        {activeBtns === "payroll" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
               <Link
@@ -364,6 +377,34 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
               >
                 Salary Cycle
               </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/overTime" && "bg-indigo-200"
+                } `}
+                to={"/overTime"}
+              >
+                Over Time
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/advanceSalary" && "bg-indigo-200"
+                } `}
+                to={"/advanceSalary"}
+              >
+                Advance Salary
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/applyLoan" && "bg-indigo-200"
+                } `}
+                to={"/applyLoan"}
+              >
+                Loan
+              </Link>
+
               <Link
                 className={`my-button ${
                   pathname === "/configEmployeeSalaries" && "bg-indigo-200"
@@ -376,6 +417,43 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           </AccordionItem>
         )}
       </div>
+
+      <SideBarButton
+        isOpen={isOpen}
+        icon={<HiOutlinePencilSquare size={20} />}
+        title={"Recuritment"}
+        arrowIcon={<BiArrowBack />}
+        handlerClick={() => toggleButtonActive("Recuritment")}
+        activeBtns={activeBtns}
+        activeBtn="Recuritment"
+      />
+
+      <div>
+        {activeBtns === "Recuritment" && (
+          <AccordionItem isOpen={isOpen}>
+            <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/applicants" && "bg-indigo-200"
+                } `}
+                to={"/applicants"}
+              >
+                Applicants
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/job" && "bg-indigo-200"
+                } `}
+                to={"/job"}
+              >
+                Jobs
+              </Link>
+            </ul>
+          </AccordionItem>
+        )}
+      </div>
+
       <SideBarButton
         isOpen={isOpen}
         icon={<AiOutlineFieldTime size={20} />}
@@ -401,6 +479,51 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           </AccordionItem>
         )}
       </div>
+      <SideBarButton
+        isOpen={isOpen}
+        icon={<RiUserCommunityLine size={20} />}
+        title={"Dynamic"}
+        arrowIcon={<BiArrowBack />}
+        handlerClick={() => toggleButtonActive("Dynamic")}
+        activeBtns={activeBtns}
+        activeBtn="Dynamic"
+      />
+
+      <div>
+        {activeBtns === "Dynamic" && (
+          <AccordionItem isOpen={isOpen}>
+            <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/promotion" && "bg-indigo-200"
+                } `}
+                to={"/promotion"}
+              >
+                Promotion Request
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/resignation" && "bg-indigo-200"
+                } `}
+                to={"/resignation"}
+              >
+                Resignation Request
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/rejoin" && "bg-indigo-200"
+                } `}
+                to={"/rejoin"}
+              >
+                Rejoin Request
+              </Link>
+            </ul>
+          </AccordionItem>
+        )}
+      </div>
+
       <SideBarButton
         isOpen={isOpen}
         icon={<CgCalculator size={20} />}

@@ -92,8 +92,9 @@ export const AddUser = ({
       setImage(e.target.files[0]);
     }
   };
-  // const allData = { ...userData, image };
-  // console.log("all Data =>", allData);
+
+  console.log("image", image);
+
   console.log({ userData, initialState }, "initialValues");
 
   useEffect(() => {
@@ -124,7 +125,7 @@ export const AddUser = ({
     e.preventDefault();
 
     const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value.trim() });
+    setUserData({ ...userData, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -155,13 +156,6 @@ export const AddUser = ({
     }
   };
 
-  // contact: "",
-  // cnic: "",
-  // address: "",
-  // date: currentDate,
-  // role: "",
-  // userId: "",
-
   const handleAddUser = async () => {
     const data = new FormData();
 
@@ -174,9 +168,10 @@ export const AddUser = ({
     data.append("role", userData.role);
     data.append("password", userData.password);
     if (image) {
-      data.append("image", userData.image);
+      data.append("image", image);
     }
 
+    console.log(data, "data");
     setLoading(true);
     try {
       const res = await axios.post(`${BASE_URL}/admin/addUser`, data, {
@@ -184,7 +179,7 @@ export const AddUser = ({
           Authorization: token,
         },
       });
-      console.log("=>>>>>", res.data);
+      console.log("=>>>>>", res);
       setLoading(false);
       handlerGetUsers();
       setUserData(initialState);
@@ -280,14 +275,7 @@ export const AddUser = ({
                 accept="image/*"
               />
             </div>
-            {/* <InputField
-              labelName="Image*"
-              placeHolder="Choose file"
-              type="file"
-              name="image"
-              handlerChange={handleImage}
-              inputVal={image || "gag"}
-            /> */}
+
             <OptionField
               value={userData?.role}
               labelName="Role*"

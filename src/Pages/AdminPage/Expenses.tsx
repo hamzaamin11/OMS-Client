@@ -15,14 +15,30 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-const numbers = [10, 25, 50, 10];
-
 type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
+
+type allExpenseT = {
+  expenseName: string;
+  expenseCategoryId: number;
+  categoryName: string;
+  addedBy: string;
+  date: string;
+  expenseStatus: string;
+  amount: number | string;
+};
 
 export const Expenses = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [isOpenModal, setIsOpenModal] = useState<EXPENSET>("");
+
+  const [allExpenses, setAllExpenses] = useState<allExpenseT[] | null>(null);
+
+  const [editExpense, setEditExpense] = useState<allExpenseT | null>(null);
+
+  const [viewExpense, setViewExpense] = useState<allExpenseT | null>(null);
+
+  const [pageNo, setPageNo] = useState(1);
 
   const handleToggleViewModal = (active: EXPENSET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
@@ -32,22 +48,41 @@ export const Expenses = () => {
 
   const getAllExpenses = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getExpense`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      console.log(res.data);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getExpense?page=${pageNo}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      setAllExpenses(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  
+  const handleIncrementPageButton = () => {
+    setPageNo(pageNo + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
+  };
+
+  const handleClickEditButton = (data: allExpenseT) => {
+    handleToggleViewModal("EDIT");
+    setEditExpense(data);
+  };
+
+  const handleClcickDeleteButton = (data: allExpenseT) => {
+    handleToggleViewModal("VIEW");
+    setViewExpense(data);
+  };
 
   useEffect(() => {
     getAllExpenses();
-  }, []);
+  }, [pageNo]);
 
   return (
     <div className="w-full mx-2">
@@ -57,7 +92,7 @@ export const Expenses = () => {
           <span>
             Total number of Expense :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+              {[allExpenses?.length]}
             </span>
           </span>
           <CustomButton
@@ -66,22 +101,12 @@ export const Expenses = () => {
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
-                {numbers.map((num) => (
-                  <option key={num}>{num}</option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
-          </div>
+          <div></div>
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
           <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr#</span>
+            <span className="p-2  min-w-[50px]">Sr.</span>
             <span className="p-2 text-left min-w-[150px] ">Expense Name</span>
             <span className="p-2 text-left min-w-[150px] ">
               Expense Category
@@ -90,37 +115,56 @@ export const Expenses = () => {
             <span className="p-2 text-left min-w-[150px] ">Add By</span>
             <span className="p-2 text-left min-w-[150px]">Action</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className=" p-2 text-left ">frontend developer</span>
-            <span className=" p-2 text-left ">22/2/2025</span>
-            <span className="p-2 flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+          {allExpenses?.map((expense, index) => (
+            <div
+              className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              key={expense.expenseCategoryId}
+            >
+              <span className=" p-2 text-left ">{index + 1}</span>
+              <span className=" p-2 text-left   ">{expense.expenseName}</span>
+              <span className=" p-2 text-left  ">{expense.categoryName}</span>
+              <span className=" p-2 text-left ">{expense.amount}</span>
+              <span className=" p-2 text-left ">{expense.addedBy}</span>
+              <span className="p-2 flex items-center  gap-1">
+                <EditButton
+                  handleUpdate={() => handleClickEditButton(expense)}
+                />
 
-              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+                <ViewButton
+                  handleView={() => handleClcickDeleteButton(expense)}
+                />
+                <DeleteButton
+                  handleDelete={() => handleToggleViewModal("DELETE")}
+                />
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
 
       {isOpenModal === "ADD" && (
         <AddExpense setModal={() => handleToggleViewModal("")} />
       )}
       {isOpenModal === "EDIT" && (
-        <EditExpense setModal={() => handleToggleViewModal("")} />
+        <EditExpense
+          setModal={() => handleToggleViewModal("")}
+          editExpense={editExpense}
+        />
       )}
       {isOpenModal === "VIEW" && (
-        <ViewExpense setIsOpenModal={() => handleToggleViewModal("")} />
+        <ViewExpense
+          setIsOpenModal={() => handleToggleViewModal("")}
+          viewExpense={viewExpense}
+        />
       )}
 
       {isOpenModal === "DELETE" && (

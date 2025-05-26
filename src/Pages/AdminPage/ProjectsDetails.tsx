@@ -151,7 +151,8 @@ export const ProjectsDetails = () => {
         </div>
 
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-3 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+            <span className="p-2  min-w-[150px]">Sr.</span>
             <span className="p-2  min-w-[150px]">Project</span>
             <span className="p-2 text-left min-w-[150px] ">
               Project Category
@@ -159,11 +160,12 @@ export const ProjectsDetails = () => {
             <span className="p-2 text-left min-w-[150px] ">Action</span>
           </div>
 
-          {allProjects?.map((project) => (
+          {allProjects?.map((project, index) => (
             <div
-              className="grid grid-cols-3 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
               key={project.id}
             >
+              <span className=" p-2 text-left   ">{index + 1}</span>
               <span className=" p-2 text-left   ">{project.projectName}</span>
               <span className=" p-2 text-left ">{project.projectCategory}</span>
 

@@ -1,23 +1,29 @@
-import { useState } from "react";
+type PaginationT = {
+  handleIncrementPageButton?: () => void;
+  handleDecrementPageButton?: () => void;
+  pageNo?: number;
+};
 
-export const Pagination = () => {
-  const [page, setPage] = useState(1);
-
+export const Pagination = ({
+  handleIncrementPageButton,
+  handleDecrementPageButton,
+  pageNo,
+}: PaginationT) => {
   return (
     <div>
       <div className="join flex items-center justify-end my-2 gap-2 ">
         <button
           className="join-item btn bg-indigo-500 border-indigo-600"
-          onClick={() => setPage(page > 1 ? page - 1 : 1)}
+          onClick={handleDecrementPageButton}
         >
           «
         </button>
         <button className="join-item btn bg-white text-gray-800 border-indigo-600">
-          Page {page}
+          Page {pageNo}
         </button>
         <button
           className="join-item btn bg-indigo-500 border-indigo-600"
-          onClick={() => setPage(page + 1)}
+          onClick={handleIncrementPageButton}
         >
           »
         </button>

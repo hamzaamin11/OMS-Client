@@ -49,6 +49,14 @@ export const UserAttendance = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<ISOPENMODALT | "">("");
 
+  const [pageNo, setPageNo] = useState(1);
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
   const token = currentUser?.token;
 
   const handleToggleViewModal = (active: ISOPENMODALT) => {
@@ -60,8 +68,16 @@ export const UserAttendance = () => {
   );
   const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
 
+  const [selectedValue, setSelectedValue] = useState(10);
+
   const [updatedAttendance, setUpdatedAttendance] =
     useState<AttendanceT | null>(null);
+
+  const handleChangeShowData = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedValue(Number(event.target.value));
+  };
 
   console.log(allAttendance, "<=");
   const handleGetALLattendance = async () => {
@@ -135,9 +151,11 @@ export const UserAttendance = () => {
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
+              <select value={selectedValue} onChange={handleChangeShowData}>
                 {numbers.map((num, index) => (
-                  <option key={index}>{num}</option>
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </span>
@@ -145,8 +163,9 @@ export const UserAttendance = () => {
           </div>
           <TableInputField />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
+        <div className="w-full max-h-[29rem] overflow-hidden  mx-auto">
+          <div className="grid grid-cols-8 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
+            <span className="p-2  min-w-[50px]">Sr.</span>
             <span className="p-2  min-w-[50px]">Date</span>
             <span className="p-2 text-left min-w-[150px] ">Users</span>
             <span className="p-2 text-left min-w-[150px] ">Clock In</span>
@@ -163,18 +182,31 @@ export const UserAttendance = () => {
             allAttendance?.map((attendance, index) => (
               <div
                 key={`${attendance?.userId}${index}`}
-                className="grid grid-cols-7 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                className="grid grid-cols-8 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm"
               >
+                <span className=" p-2 text-left ">{index + 1}</span>
                 <span className=" p-2 text-left ">
                   {attendance?.date?.slice(0, 10)}
                 </span>
                 <span className=" p-2 text-left   ">{attendance?.name}</span>
-                <span className=" p-2 text-left  ">
+                <span
+                  className={`p-2 text-left ${
+                    attendance?.clockIn <= "09:15:00"
+                      ? "text-green-500 "
+                      : attendance?.clockIn <= "09:30:00"
+                      ? "text-orange-500 "
+                      : "text-red-500 "
+                  }`}
+                >
                   {attendance?.clockIn === "00:00"
                     ? null
                     : attendance?.clockIn ?? "--"}
                 </span>
-                <span className=" p-2 text-left ">
+                <span
+                  className={` p-2 text-left ${
+                    attendance?.clockOut === "18:00:00" ? "text-green-500" : ""
+                  } `}
+                >
                   {attendance?.clockOut ?? "NUll"}
                 </span>
                 <span className=" p-2 text-left ">
@@ -224,7 +256,11 @@ export const UserAttendance = () => {
       )}
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={allAttendance?.length} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
     </div>
   );

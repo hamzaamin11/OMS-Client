@@ -13,6 +13,7 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
@@ -74,6 +75,8 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
         },
       });
       console.log(res.data);
+      setModal();
+      toast.success("Expense added successfully");
     } catch (error) {
       console.log(error);
     }

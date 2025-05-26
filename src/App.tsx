@@ -35,6 +35,15 @@ import { Profile } from "./Pages/AdminPage/Profile";
 import { PrivateRoute } from "./Components/PrivateRouteHOC/PrivateRoute";
 import { EmployeePrivateLayout } from "./Components/HOC/PrivateLayout/EmployeePrivateLayout";
 import { EmployeeDashborad } from "./Components/Employee/EmployeeDashborad";
+import { Loan } from "./Pages/AdminPage/Loan";
+import { AdvanceSalary } from "./Pages/AdminPage/AdvanceSalary";
+import { OverTime } from "./Pages/AdminPage/OverTime";
+import { Applicants } from "./Pages/AdminPage/Applicants";
+import { Jobs } from "./Pages/AdminPage/Jobs";
+import { EmployeeLifeline } from "./Pages/AdminPage/EmployeeLifeline";
+import { Promotion } from "./Pages/AdminPage/Promotion";
+import { Resignation } from "./Pages/AdminPage/Resignation";
+import { Rejoin } from "./Pages/AdminPage/Rejoin";
 
 function App() {
   return (
@@ -84,6 +93,42 @@ function App() {
             element={
               <PrivateLayout>
                 <CustomerDetail />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/employeeLifeline"
+            element={
+              <PrivateLayout>
+                <EmployeeLifeline />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/promotion"
+            element={
+              <PrivateLayout>
+                <Promotion />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/resignation"
+            element={
+              <PrivateLayout>
+                <Resignation />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/rejoin"
+            element={
+              <PrivateLayout>
+                <Rejoin />
               </PrivateLayout>
             }
           />
@@ -275,6 +320,51 @@ function App() {
               </PrivateLayout>
             }
           />
+
+          <Route
+            path="/applyLoan"
+            element={
+              <PrivateLayout>
+                <Loan />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/advanceSalary"
+            element={
+              <PrivateLayout>
+                <AdvanceSalary />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/overTime"
+            element={
+              <PrivateLayout>
+                <OverTime />
+              </PrivateLayout>
+            }
+          />
+          <Route
+            path="/applicants"
+            element={
+              <PrivateLayout>
+                <Applicants />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/job"
+            element={
+              <PrivateLayout>
+                <Jobs />
+              </PrivateLayout>
+            }
+          />
+
           <Route
             path="/configEmployeeSalaries"
             element={

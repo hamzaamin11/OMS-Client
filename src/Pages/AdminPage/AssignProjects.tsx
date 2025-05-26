@@ -87,7 +87,7 @@ export const AssignProjects = () => {
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
           <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
+            <span className="p-2  min-w-[50px]">Sr.</span>
             <span className="p-2 text-left min-w-[150px] ">Users</span>
             <span className="p-2 text-left min-w-[150px] ">Project</span>
             <span className="p-2 text-left min-w-[150px] ">Actions</span>

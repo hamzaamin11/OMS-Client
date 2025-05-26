@@ -7,8 +7,17 @@ import { Title } from "../Title";
 import { TextareaField } from "../InputFields/TextareaField";
 import { OptionField } from "../InputFields/OptionField";
 
+type UpdateLEAVET = {
+  id: number;
+  attendanceStatus: string;
+  date: string;
+  leaveApprovalStatus: string;
+  name: string;
+};
+
 type AddAttendanceProps = {
   setModal: () => void;
+  EditLeave: UpdateLEAVET | null;
 };
 const optionData = [
   { id: 1, label: "Pending", value: "pending" },
@@ -25,8 +34,10 @@ const initialState = {
   status: "",
 };
 
-export const UpdateLeave = ({ setModal }: AddAttendanceProps) => {
+export const UpdateLeave = ({ setModal, EditLeave }: AddAttendanceProps) => {
   const [updateLeave, setUpdateLeave] = useState(initialState);
+
+  console.log(EditLeave);
 
   const handlerChange = (
     e: React.ChangeEvent<

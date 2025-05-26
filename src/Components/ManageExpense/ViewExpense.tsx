@@ -1,9 +1,23 @@
 import { Title } from "../Title";
 
+type allExpenseT = {
+  expenseName: string;
+  expenseCategoryId: number;
+  categoryName: string;
+  addedBy: string;
+  date: string;
+  expenseStatus: string;
+  amount: number | string;
+};
+
 type CustomerDetailProps = {
   setIsOpenModal: () => void;
+  viewExpense: allExpenseT | null;
 };
-export const ViewExpense = ({ setIsOpenModal }: CustomerDetailProps) => {
+export const ViewExpense = ({
+  setIsOpenModal,
+  viewExpense,
+}: CustomerDetailProps) => {
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
@@ -17,29 +31,29 @@ export const ViewExpense = ({ setIsOpenModal }: CustomerDetailProps) => {
               <span className="text-lg font-semibold text-gray-800">
                 Category Name:
               </span>
-              <p className="text-gray-600">{"Jamat"}</p>
+              <p className="text-gray-600">{viewExpense?.categoryName}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Expense Name:
               </span>
-              <p className="text-gray-600">{"build expense"}</p>
+              <p className="text-gray-600">{viewExpense?.expenseName}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Amount:
               </span>
-              <p className="text-gray-600">{"273273"}</p>
+              <p className="text-gray-600">{viewExpense?.amount}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Added By:
               </span>
-              <p className="text-gray-600">{"hamza"}</p>
+              <p className="text-gray-600">{viewExpense?.addedBy}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">Date:</span>
-              <p className="text-gray-600">{"2025-04-14"}</p>
+              <p className="text-gray-600">{viewExpense?.date.slice(0, 10)}</p>
             </div>
           </div>
         </div>

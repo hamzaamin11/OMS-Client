@@ -11,9 +11,9 @@ import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
 
 const numbers = [10, 25, 50, 100];
 
-type QuotationT = "ADD" | "VIEW" | "EDIT" | "";
-export const Quotation = () => {
-  const [isOpenModal, setIsOpenModal] = useState<QuotationT>("");
+type AdvanceSalaryT = "ADD" | "VIEW" | "EDIT" | "";
+export const AdvanceSalary = () => {
+  const [isOpenModal, setIsOpenModal] = useState<AdvanceSalaryT>("");
 
   const [pageNo, setPageNo] = useState(1);
 
@@ -31,23 +31,23 @@ export const Quotation = () => {
   const handleDecrementPageButton = () => {
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
   };
-  const handleToggleViewModal = (active: QuotationT) => {
+  const handleToggleViewModal = (active: AdvanceSalaryT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Quotation" activeFile="All Quotation list" />
+      <TableTitle tileName="Advance Salary" activeFile="All Quotation list" />
       <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Attendance :{" "}
+            Total number of Addvance Salary Applications :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
               [10]
             </span>
           </span>
           <CustomButton
-            label="Add Quotation"
+            label="Advance Salry"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
@@ -68,16 +68,21 @@ export const Quotation = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
-            <span className="p-2 text-left min-w-[150px] ">Ref</span>
-            <span className="p-2 text-left min-w-[150px] ">Customer</span>
-            <span className="p-2 text-left min-w-[150px] ">Actions</span>
+          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500  text-sm">
+            <span className="p-2  min-w-[50px]">Sr.</span>
+            <span className="p-2 text-left min-w-[150px] ">Employee Name</span>
+            <span className="p-2 text-left min-w-[150px] ">Date</span>
+            <span className="p-2 text-left min-w-[150px] ">Amount</span>
+            <span className="p-2 text-left min-w-[150px] ">Approval</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
+          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm">
             <span className=" p-2 text-left ">1</span>
             <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
+            <span className=" p-2 text-left   ">23,oct,2025</span>
+            <span className=" p-2 text-left  ">12000</span>
+            <span className=" text-orange-500 ">
+              <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
+            </span>
             <span className="p-2 flex items-center  gap-1">
               <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 

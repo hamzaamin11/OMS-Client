@@ -15,21 +15,25 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
 
+type allExpenseT = {
+  expenseName: string;
+  expenseCategoryId: number;
+  categoryName: string;
+  addedBy: string;
+  date: string;
+  expenseStatus: string;
+  amount: number | string;
+};
+
 type AddAttendanceProps = {
   setModal: () => void;
+  editExpense: allExpenseT | null;
 };
 
-const initialState = {
-  employeeName: "",
-  expenseName: "",
-  account: "",
-  addBy: "",
-  date: "",
-};
-export const EditExpense = ({ setModal }: AddAttendanceProps) => {
+export const EditExpense = ({ setModal, editExpense }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addExpense, setAddExpense] = useState(initialState);
+  const [addExpense, setAddExpense] = useState(editExpense);
 
   const [allUsers, setAllUsers] = useState([]);
 
@@ -42,7 +46,7 @@ export const EditExpense = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddExpense({ ...addExpense, [name]: value });
+    setAddExpense({ ...addExpense, [name]: value } as allExpenseT);
   };
 
   const getAllUsers = async () => {
@@ -73,7 +77,7 @@ export const EditExpense = ({ setModal }: AddAttendanceProps) => {
               <UserSelect
                 labelName="Employees*"
                 name="employeeName"
-                value={addExpense.employeeName}
+                value={addExpense?.expenseName ?? ""}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
@@ -82,28 +86,32 @@ export const EditExpense = ({ setModal }: AddAttendanceProps) => {
                 labelName="Expense Category*"
                 name="expenseExpense"
                 handlerChange={handlerChange}
-                inputVal={addExpense.expenseName}
+                inputVal={addExpense?.categoryName}
               />
 
               <InputField
                 labelName="Account*"
                 name="account"
                 handlerChange={handlerChange}
-                inputVal={addExpense.account}
+                inputVal={
+                  addExpense?.amount !== undefined
+                    ? String(addExpense.amount)
+                    : ""
+                }
               />
 
               <InputField
                 labelName="Add By*"
                 name="addBy"
                 handlerChange={handlerChange}
-                inputVal={addExpense.addBy}
+                inputVal={addExpense?.addedBy}
               />
 
               <InputField
                 labelName="Date*"
                 name="date"
                 handlerChange={handlerChange}
-                inputVal={addExpense.date}
+                inputVal={addExpense?.date.slice(0, 10)}
               />
             </div>
 

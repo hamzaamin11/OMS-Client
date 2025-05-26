@@ -11,9 +11,9 @@ import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
 
 const numbers = [10, 25, 50, 100];
 
-type QuotationT = "ADD" | "VIEW" | "EDIT" | "";
-export const Quotation = () => {
-  const [isOpenModal, setIsOpenModal] = useState<QuotationT>("");
+type LoanT = "ADD" | "VIEW" | "EDIT" | "";
+export const Loan = () => {
+  const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
 
@@ -31,23 +31,23 @@ export const Quotation = () => {
   const handleDecrementPageButton = () => {
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
   };
-  const handleToggleViewModal = (active: QuotationT) => {
+  const handleToggleViewModal = (active: LoanT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Quotation" activeFile="All Quotation list" />
+      <TableTitle tileName="Loan" activeFile="Loan list" />
       <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Attendance :{" "}
+            Total number of Loan Applications :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
               [10]
             </span>
           </span>
           <CustomButton
-            label="Add Quotation"
+            label="Add Loan"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
@@ -68,16 +68,29 @@ export const Quotation = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
-            <span className="p-2 text-left min-w-[150px] ">Ref</span>
-            <span className="p-2 text-left min-w-[150px] ">Customer</span>
-            <span className="p-2 text-left min-w-[150px] ">Actions</span>
+          <div className="grid grid-cols-9 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
+            <span className="p-2">Sr</span>
+            <span className="p-2 text-left">Employee Name</span>
+            <span className="p-2 text-left">Loan Date</span>
+            <span className="p-2 text-left">Loan Amount</span>
+            <span className="p-2 text-left">Installments</span>
+            <span className="p-2 text-left">Paid Amount</span>
+            <span className="p-2 text-left">REM Amount</span>
+            <span className="p-2 text-left">Approval</span>
+            <span className="p-2 text-left">Actions</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
+          <div className="grid grid-cols-9 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center">
             <span className=" p-2 text-left ">1</span>
             <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
+            <span className=" p-2 text-left  ">23,may,2025</span>
+            <span className=" p-2 text-left ">10,0000</span>
+            <span className=" p-2 text-left   ">10</span>
+            <span className=" p-2 text-left   ">0</span>
+            <span className=" p-2 text-left  ">10,0000</span>
+            <span className=" text-orange-500 ">
+              <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
+            </span>
+
             <span className="p-2 flex items-center  gap-1">
               <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 

@@ -21,6 +21,7 @@ export const ViewUserDetailModal = ({
   setModal,
   viewUserDetail,
 }: ModalTProps) => {
+  console.log(viewUserDetail, "date");
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
@@ -33,7 +34,7 @@ export const ViewUserDetailModal = ({
             {/* Profile Picture */}
             <img
               className="w-24 h-24 rounded-full border-4 border-indigo-500 object-cover"
-              src={profilePicture}
+              src={ profilePicture}
               alt="Profile"
             />
 

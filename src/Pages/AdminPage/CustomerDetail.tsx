@@ -8,22 +8,39 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+
 import { Loader } from "../../Components/LoaderComponent/Loader";
+
 import { AddCustomer } from "../../Components/CustomerComponents/AddCustomerForm";
+
 import axios, { AxiosError } from "axios";
+
 import { BASE_URL } from "../../Content/URL";
+
 import { toast } from "react-toastify";
+
 import { CustomerViewModal } from "../../Components/CustomerComponents/CustomerViewModal";
+
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+
 import { Pagination } from "../../Components/Pagination/Pagination";
+
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+
 import { UpdateCustomer } from "../../Components/CustomerComponents/UpdateCustomer";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
+
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 const numbers = [10, 25, 50, 100];
+
 type ModalT = "ADD" | "UPDATE" | "VIEW" | "DELETE";
+
 type AllcustomerT = {
   id: number;
   customerStatus: string;
@@ -41,6 +58,19 @@ export const CustomerDetail = () => {
   const [customerDetail, setCustomerDetail] = useState<AllcustomerT | null>(
     null
   );
+  const [selectedValue, setSelectedValue] = useState(10);
+
+  const [pageNo, setPageNo] = useState(1);
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
+  console.log(selectedValue);
 
   const [catchId, setCatchId] = useState<number | null>(null);
 
@@ -70,6 +100,12 @@ export const CustomerDetail = () => {
       console.log(axiosError.message);
       toast.error("No customers available yet!");
     }
+  };
+
+  const handleChangeShowData = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedValue(Number(event.target.value));
   };
 
   const handleDeleteCustomer = async (id: number | null) => {
@@ -135,9 +171,11 @@ export const CustomerDetail = () => {
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
-                {numbers.map((num) => (
-                  <option>{num}</option>
+              <select value={selectedValue} onChange={handleChangeShowData}>
+                {numbers.map((num, index) => (
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </span>
@@ -148,7 +186,7 @@ export const CustomerDetail = () => {
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
           {/* Header Row */}
 
-          <div className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-600">
+          <div className="grid grid-cols-[0.2fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-600 text-sm">
             <span className=" p-2  min-w-[50px]">Sr#</span>
             <span className=" p-2 text-left min-w-[150px]">Customer</span>
             <span className=" p-2 text-left min-w-[150px]">
@@ -168,7 +206,7 @@ export const CustomerDetail = () => {
           )}
           {allCustomers.map((customer, index) => (
             <div
-              className="grid grid-cols-7 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              className="grid grid-cols-[0.2fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm"
               key={customer.id}
             >
               <span className=" border-gray-600 p-2">{index + 1}</span>
@@ -222,7 +260,11 @@ export const CustomerDetail = () => {
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={totalNum} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
     </div>
   );

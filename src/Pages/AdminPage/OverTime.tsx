@@ -3,17 +3,17 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { useState } from "react";
 import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
 const numbers = [10, 25, 50, 100];
 
-type QuotationT = "ADD" | "VIEW" | "EDIT" | "";
-export const Quotation = () => {
-  const [isOpenModal, setIsOpenModal] = useState<QuotationT>("");
+type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+export const OverTime = () => {
+  const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
 
@@ -31,23 +31,23 @@ export const Quotation = () => {
   const handleDecrementPageButton = () => {
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
   };
-  const handleToggleViewModal = (active: QuotationT) => {
+  const handleToggleViewModal = (active: LoanT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Quotation" activeFile="All Quotation list" />
+      <TableTitle tileName="Over Time" activeFile="OverTime list" />
       <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Attendance :{" "}
+            Total number of Overtime Work :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
               [10]
             </span>
           </span>
           <CustomButton
-            label="Add Quotation"
+            label="Add Time"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
@@ -68,18 +68,28 @@ export const Quotation = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
-            <span className="p-2 text-left min-w-[150px] ">Ref</span>
-            <span className="p-2 text-left min-w-[150px] ">Customer</span>
-            <span className="p-2 text-left min-w-[150px] ">Actions</span>
+          <div className="grid grid-cols-[0.2fr_0.5fr_0.5fr_0.5fr_0.5fr_0.5fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
+            <span className="p-2  ">Sr</span>
+            <span className="p-2  ">Employee Name</span>
+            <span className="p-2">Date</span>
+            <span className="p-2 ">Over Time</span>
+
+            <span className="p-2 ">Approval</span>
+            <span className="p-2 ">Actions</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
+          <div className="grid grid-cols-[0.2fr_0.5fr_0.5fr_0.5fr_0.5fr_0.5fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center">
+            <span className="p-2 ">1</span>
+            <span className="p-2 ">Hamza Amin</span>
+            <span className="p-2 ">23, May, 2025</span>
+            <span className="p-2 ">32:10:20</span>
+
+            <span className=" text-orange-500 ">
+              <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
+            </span>
             <span className="p-2 flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
 
               <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
             </span>
@@ -99,8 +109,13 @@ export const Quotation = () => {
       {isOpenModal === "ADD" && (
         <AddQuotation setModal={() => handleToggleViewModal("")} />
       )}
-      {isOpenModal === "EDIT" && (
-        <EditQuotation setModal={() => handleToggleViewModal("")} />
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleToggleViewModal("")}
+          message="Are you sure you want to delete this overtime record?"
+        />
       )}
     </div>
   );

@@ -41,6 +41,10 @@ export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
 
   const token = currentUser?.token;
 
+  const isAdmin = currentUser?.role;
+
+  console.log("res", isAdmin);
+
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -92,14 +96,15 @@ export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Todo</Title>
             <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Employees*"
-                name="employeeId"
-                value={addTodo.employeeId}
-                handlerChange={handlerChange}
-                optionData={allUsers}
-              />
-
+              {currentUser?.role === "admin" && (
+                <UserSelect
+                  labelName="Employees*"
+                  name="employeeId"
+                  value={addTodo.employeeId}
+                  handlerChange={handlerChange}
+                  optionData={allUsers}
+                />
+              )}
               <InputField
                 labelName="Task*"
                 name="task"

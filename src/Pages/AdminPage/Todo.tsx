@@ -13,16 +13,16 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-const numbers = [10, 25, 50, 100];
-
 type ALLTODOT = {
   id: number;
   name: string;
+  employeeName: string;
   task: string;
   note: string;
   startDate: string;
   endDate: string;
   deadline: string;
+  Deadline?: string;
 };
 type TODOT = "Add" | "Edit" | "Delete" | "";
 
@@ -38,6 +38,7 @@ export const Todo = () => {
   const [isOpenModal, setIsOpenModal] = useState<TODOT>("");
 
   const token = currentUser?.token;
+  const id = currentUser?.userId;
 
   const handleToggleViewModal = (active: TODOT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
@@ -56,6 +57,20 @@ export const Todo = () => {
       console.log(error);
     }
   };
+
+  const getUsersAllTodos = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/user/getTodo/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllTodos(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleClickEditButton = (seleteData: ALLTODOT) => {
     handleToggleViewModal("Edit");
     setSeleteTodo(seleteData);
@@ -84,7 +99,11 @@ export const Todo = () => {
   };
 
   useEffect(() => {
-    getAllTodos();
+    if (currentUser?.role === "admin") {
+      getAllTodos();
+    } else {
+      getUsersAllTodos();
+    }
   }, []);
 
   return (
@@ -95,7 +114,7 @@ export const Todo = () => {
           <span>
             Total number of Attendance :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+              [{allTodos?.length}]
             </span>
           </span>
           <CustomButton
@@ -104,22 +123,12 @@ export const Todo = () => {
           />
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
-                {numbers.map((num, index) => (
-                  <option key={index}>{num}</option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
-          </div>
+          <div></div>
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
           <div className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
+            <span className="p-2  min-w-[50px]">Sr.</span>
             <span className="p-2 text-left min-w-[150px] ">Employee</span>
             <span className="p-2 text-left min-w-[150px] ">Tasks</span>
             <span className="p-2 text-left min-w-[150px] ">Start Date</span>
@@ -133,7 +142,9 @@ export const Todo = () => {
               key={todo.id}
             >
               <span className=" p-2 text-left ">{index + 1}</span>
-              <span className=" p-2 text-left   ">{todo.name}</span>
+              <span className=" p-2 text-left   ">
+                {todo?.name || todo?.employeeName}
+              </span>
               <span className=" p-2 text-left  ">{todo.task}</span>
               <span className=" p-2 text-left ">
                 {todo.startDate.slice(0, 10)}
@@ -142,7 +153,7 @@ export const Todo = () => {
                 {todo.endDate.slice(0, 10)}
               </span>
               <span className=" p-2 text-left ">
-                {todo.deadline.slice(0, 10)}
+                {todo.deadline?.slice(0, 10) || todo.Deadline?.slice(0, 10)}
               </span>
               <span className="p-2 flex items-center  gap-2">
                 <EditButton handleUpdate={() => handleClickEditButton(todo)} />

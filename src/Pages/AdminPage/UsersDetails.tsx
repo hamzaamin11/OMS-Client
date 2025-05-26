@@ -73,7 +73,7 @@ export const UsersDetails = () => {
 
   const [selectedValue, setSelectedValue] = useState(10);
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeShowData = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(Number(event.target.value));
   };
   const [viewUserDetail, setViewUserDetail] = useState<UserType>(
@@ -175,7 +175,7 @@ export const UsersDetails = () => {
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChange}>
+              <select value={selectedValue} onChange={handleChangeShowData}>
                 {numbers.map((num, index) => (
                   <option key={index} value={num}>
                     {num}
@@ -189,7 +189,7 @@ export const UsersDetails = () => {
         </div>
         <div className="w-full max-h-[29.5rem] overflow-hidden">
           {/* Header Row */}
-          <div className="grid grid-cols-8 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500">
+          <div className="grid grid-cols-8 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm">
             <span className=" p-2  min-w-[50px]">Sr#</span>
             <span className=" p-2 text-left min-w-[150px]">Users</span>
             <span className=" p-2 text-left min-w-[150px]">Email</span>
@@ -212,7 +212,7 @@ export const UsersDetails = () => {
               .slice(0, selectedValue)
               .map((user, index) => (
                 <div
-                  className="grid grid-cols-8 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                  className="grid grid-cols-8 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm"
                   key={user.id}
                 >
                   <span className=" border-gray-600 p-2  ">{index + 1}</span>

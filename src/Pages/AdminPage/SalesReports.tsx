@@ -14,10 +14,15 @@ type CustomerT = {
   customerName: string;
 };
 
+const numbers = [10, 25, 50, 100];
+
 export const SalesReports = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const token = currentUser?.token;
+
+  const [selectedValue, setSelectedValue] = useState(10);
+
 
   const [getCustomers, setGetCustomers] = useState<CustomerT[] | null>(null);
 
@@ -36,6 +41,12 @@ export const SalesReports = () => {
   ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleChangeShowData = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedValue(Number(event.target.value));
   };
 
   const handleGetALLCustomers = async () => {
@@ -102,7 +113,19 @@ export const SalesReports = () => {
 
       {/* Top Controls */}
       <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
-        <div></div>
+        <div>
+          <span>Show</span>
+          <span className="bg-gray-200 rounded mx-1 p-1">
+            <select value={selectedValue} onChange={handleChangeShowData}>
+              {numbers.map((num, index) => (
+                <option key={index} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </span>
+          <span>entries</span>
+        </div>
         <TableInputField />
       </div>
 
