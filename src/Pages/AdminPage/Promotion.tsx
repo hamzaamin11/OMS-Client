@@ -8,7 +8,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
@@ -21,11 +21,21 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 import { UpdatePromotion } from "../../Components/PromotionModal/UpdatePromotion";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 export const Promotion = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   console.log("=>", isOpenModal);
@@ -49,6 +59,16 @@ export const Promotion = () => {
   const handleToggleViewModal = (active: LoanT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) PROMOTION";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("PROMOTION"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

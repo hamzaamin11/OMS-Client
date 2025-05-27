@@ -4,15 +4,25 @@ import { TableInputField } from "../../Components/TableLayoutComponents/TableInp
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
 type AdvanceSalaryT = "ADD" | "VIEW" | "EDIT" | "";
 export const AdvanceSalary = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<AdvanceSalaryT>("");
 
   const [pageNo, setPageNo] = useState(1);
@@ -34,6 +44,16 @@ export const AdvanceSalary = () => {
   const handleToggleViewModal = (active: AdvanceSalaryT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) ADVANCE SALARY";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("ADVANCE SALARY"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
@@ -68,19 +88,20 @@ export const AdvanceSalary = () => {
           <TableInputField />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500  text-sm">
+          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500  text-sm">
             <span className="p-2  min-w-[50px]">Sr.</span>
             <span className="p-2 text-left min-w-[150px] ">Employee Name</span>
             <span className="p-2 text-left min-w-[150px] ">Date</span>
             <span className="p-2 text-left min-w-[150px] ">Amount</span>
             <span className="p-2 text-left min-w-[150px] ">Approval</span>
+            <span className="p-2 text-left min-w-[150px] ">Actions</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm">
+          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm">
             <span className=" p-2 text-left ">1</span>
             <span className=" p-2 text-left   ">Hamza amin</span>
             <span className=" p-2 text-left   ">23,oct,2025</span>
             <span className=" p-2 text-left  ">12000</span>
-            <span className=" text-orange-500 ">
+            <span className=" text-orange-500 p-2 ">
               <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
             </span>
             <span className="p-2 flex items-center  gap-1">

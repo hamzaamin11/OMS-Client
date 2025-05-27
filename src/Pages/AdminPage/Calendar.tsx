@@ -12,7 +12,12 @@ import { useEffect, useState } from "react";
 import { AddCalendarSession } from "../../Components/CalendarModal/AddCalendarSession";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 10];
 
@@ -20,6 +25,10 @@ type CALENDART = "ADD" | "EDIT" | "DELETE" | "";
 
 export const Calendar = () => {
   const { currentUser } = useAppSelector((state) => state?.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<CALENDART>("");
 
@@ -44,7 +53,14 @@ export const Calendar = () => {
 
   useEffect(() => {
     handleGetAllCalendar();
+    document.title = "(OMS) CALENDAR";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("CALENDAR"));
+    }, 1000);
   }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

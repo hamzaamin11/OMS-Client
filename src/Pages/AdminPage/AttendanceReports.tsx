@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const itemsPerPageOptions = [10, 25, 50];
 
 export const AttendanceReports = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const currentDate = new Date().toISOString().split("T")[0]; // ISO formatted date
 
   const initialState = {
@@ -65,6 +75,16 @@ export const AttendanceReports = () => {
     window.print();
     location.reload(); // restore full pag
   };
+
+  useEffect(() => {
+    document.title = "(OMS) ATTENDANCE REPORTS";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("ATTENDANCE REPORTS"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
@@ -148,8 +168,8 @@ export const AttendanceReports = () => {
             <span className="p-2 text-left text-sm">Hamza Amin</span>
             <span className="p-2 text-left text-sm">9:00 AM</span>
             <span className="p-2 text-left text-sm">6:00 PM</span>
-            <span className="p-2 text-left min-w-full text-sm bg-green-500 text-white">
-              Present
+            <span className="p-2 text-left min-w-full text-sm  text-white">
+              <span className="bg-green-500 p-2 rounded-md"> Present</span>
             </span>
           </div>
         </div>

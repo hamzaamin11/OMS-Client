@@ -11,8 +11,13 @@ import { EditCategory } from "../../Components/ProjectCategoryModal/EditCategory
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 10];
 
@@ -25,6 +30,10 @@ type AllExpenseCategoryT = {
 
 export const ExpensesCatogries = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const token = currentUser?.token;
 
@@ -86,7 +95,14 @@ export const ExpensesCatogries = () => {
   };
   useEffect(() => {
     handlegetExpenseCategory();
+    document.title = "(OMS)EXPENSE CATEGORY";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("EXPENSE CATEGORY"));
+    }, 1000);
   }, []);
+  if (loader) return <Loader />;
+
   return (
     <div className="w-full mx-2">
       <TableTitle

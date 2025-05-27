@@ -11,7 +11,12 @@ import { EditSale } from "../../Components/SaleModals/EditSale";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import { Loader } from "../../Components/LoaderComponent/Loader";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
 
 type SALET = "ADD" | "EDIT" | "DELETE" | "";
 
@@ -28,6 +33,9 @@ type ADDSALET = {
 export const Sales = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
   const [isOpenModal, setIsOpenModal] = useState<SALET>("");
 
   const [allSales, setAllSales] = useState<ADDSALET[] | null>(null);
@@ -90,8 +98,14 @@ export const Sales = () => {
 
   useEffect(() => {
     handleGetsales();
+    document.title = "(OMS) SALE";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("SALE"));
+    }, 1000);
   }, []);
 
+  if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sale" activeFile="All Sale,s list" />

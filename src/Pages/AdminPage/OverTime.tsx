@@ -3,16 +3,26 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 export const OverTime = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
@@ -34,6 +44,16 @@ export const OverTime = () => {
   const handleToggleViewModal = (active: LoanT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) OVER TIME";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("OVER TIME"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

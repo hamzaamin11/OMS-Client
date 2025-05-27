@@ -4,20 +4,40 @@ import { TableInputField } from "../../Components/TableLayoutComponents/TableInp
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddEmployeePayment } from "../../Components/EmployeeAccountModal/AddEmployeePayment";
 import { AddEmployeeRefund } from "../../Components/EmployeeAccountModal/AddEmployeeRefund";
 import { ViewEmployeeAccount } from "../../Components/EmployeeAccountModal/ViewEmployeeAccount";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 const numbers = [10, 25, 50, 10];
 
 type EMPLOYEEACOUNTT = "ADDPAYMENT" | "ADDREFUND" | "VIEW" | "";
 
 export const EmployeeAccount = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<EMPLOYEEACOUNTT>("");
 
   const handleToggleViewModal = (active: EMPLOYEEACOUNTT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) EMPLOYEE ACCOUNT";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("EMPLOYEE ACCOUNT"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

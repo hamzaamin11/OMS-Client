@@ -11,7 +11,12 @@ import { UpdateTodo } from "../../Components/TodoModals/UpdateTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 type ALLTODOT = {
   id: number;
@@ -28,6 +33,10 @@ type TODOT = "Add" | "Edit" | "Delete" | "";
 
 export const Todo = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [allTodos, setAllTodos] = useState<ALLTODOT[] | null>(null);
 
@@ -104,8 +113,14 @@ export const Todo = () => {
     } else {
       getUsersAllTodos();
     }
-  }, []);
 
+    document.title = "(OMS)ALL Todos";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("TODOS"));
+    }, 1000);
+  }, []);
+  if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Todo's" activeFile="All Todo,s list" />

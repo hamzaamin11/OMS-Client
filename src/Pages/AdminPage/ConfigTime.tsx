@@ -11,8 +11,13 @@ import { EditConfigTime } from "../../Components/ConfigTimeModal/EditConfigTime"
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 10];
 
@@ -25,6 +30,10 @@ type ALLCONFIGT = {
 };
 export const ConfigTime = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<CONFIGTIMET>("");
 
@@ -84,7 +93,15 @@ export const ConfigTime = () => {
 
   useEffect(() => {
     handleGetAllTimeConfig();
+    document.title = "(OMS) CONFIG TIME";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("JCONFIG TIME"));
+    }, 1000);
   }, []);
+
+  if (loader) return <Loader />;
+  
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Configure Time" activeFile="Late List" />

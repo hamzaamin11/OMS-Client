@@ -11,8 +11,13 @@ import { EditPayment } from "../../Components/PayementModals/EditPayment";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
@@ -29,6 +34,10 @@ type PAYMENTMETHODT = {
 
 export const Payments = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<PATMENTT>("");
 
@@ -91,7 +100,14 @@ export const Payments = () => {
 
   useEffect(() => {
     handleGetPayments();
+    document.title = "(OMS) PAYMENT";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("PAYMENT"));
+    }, 1000);
   }, []);
+
+  if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Payment" activeFile="All Payment list" />

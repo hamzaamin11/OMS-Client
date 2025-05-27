@@ -8,7 +8,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
@@ -21,12 +21,22 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { UpdateRejoining } from "../../Components/RejoinModal/UpdateRejoining";
 
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 
 export const Rejoin = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
@@ -49,6 +59,15 @@ export const Rejoin = () => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
+  useEffect(() => {
+    document.title = "(OMS) REJOIN";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("REJOIN"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Rejoining" activeFile="Rejoining list" />

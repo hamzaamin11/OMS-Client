@@ -11,7 +11,12 @@ import { EditAssignProject } from "../../Components/AssignProjectModal/EditAssig
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
@@ -25,6 +30,10 @@ type ALLASSIGNPROJECTT = {
 
 export const AssignProjects = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [allAssignProjects, setAllAssignProjects] = useState<
     ALLASSIGNPROJECTT[] | null
@@ -54,7 +63,14 @@ export const AssignProjects = () => {
 
   useEffect(() => {
     handleGetAllAssignProjects();
+    document.title = "(OMS)ASSIGN PTROJECTS";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("Assign project"));
+    }, 1000);
   }, []);
+
+  if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Assign Project" activeFile="Assign Project list" />

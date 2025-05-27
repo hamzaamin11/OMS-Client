@@ -8,19 +8,39 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { IoIosClose } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddSalaryCycle } from "../../Components/SalaryCycleModal/AddSalaryCycle";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 10];
 
 type SALARYCYCLET = "ADD" | "EDIT" | "DELETE" | "";
 
 export const SalaryCycle = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<SALARYCYCLET>("");
 
   const handleToggleViewModal = (active: SALARYCYCLET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) SALARY CYCLE";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("SALARY CYCLE"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

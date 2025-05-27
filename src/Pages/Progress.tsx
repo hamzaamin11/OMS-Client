@@ -11,7 +11,9 @@ import { EditProgress } from "../Components/ProgressModal/EditProgress";
 import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
-import { useAppSelector } from "../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../redux/Hooks";
+import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
+import { Loader } from "../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
@@ -26,6 +28,10 @@ type ALLPROGRESST = {
 
 export const Progress = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [allProgress, setAllProgress] = useState<ALLPROGRESST[] | null>(null);
 
@@ -52,7 +58,14 @@ export const Progress = () => {
 
   useEffect(() => {
     handleGetAllProgress();
+    document.title = "(OMS) PROGRESS";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("progress"));
+    }, 1000);
   }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

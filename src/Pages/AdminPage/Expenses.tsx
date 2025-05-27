@@ -13,7 +13,12 @@ import { ViewExpense } from "../../Components/ManageExpense/ViewExpense";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -29,6 +34,10 @@ type allExpenseT = {
 
 export const Expenses = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<EXPENSET>("");
 
@@ -83,6 +92,16 @@ export const Expenses = () => {
   useEffect(() => {
     getAllExpenses();
   }, [pageNo]);
+
+  useEffect(() => {
+    document.title = "(OMS) EXPENSE";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("EXPENSE"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

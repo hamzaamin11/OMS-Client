@@ -6,8 +6,13 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import { OptionField } from "../../Components/InputFields/OptionField";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 type CustomerT = {
   id: number;
@@ -19,10 +24,13 @@ const numbers = [10, 25, 50, 100];
 export const SalesReports = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const token = currentUser?.token;
 
   const [selectedValue, setSelectedValue] = useState(10);
-
 
   const [getCustomers, setGetCustomers] = useState<CustomerT[] | null>(null);
 
@@ -106,7 +114,15 @@ export const SalesReports = () => {
   };
   useEffect(() => {
     handleGetALLCustomers();
+
+    document.title = "(OMS) SALE REPORTS";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("SALE REPORTS"));
+    }, 1000);
   }, []);
+
+  if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sales Report" activeFile="Sales Report" />

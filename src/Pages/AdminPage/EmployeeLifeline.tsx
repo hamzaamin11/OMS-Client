@@ -8,16 +8,28 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
 import { AddEmployeeLifeLine } from "../../Components/EmpLifeLine/AddEmployeeLifeLine";
+import { ViewEmployeeLifeLine } from "../../Components/EmpLifeLine/ViewEmployeeLifeLine";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "";
+
 export const EmployeeLifeline = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
@@ -39,6 +51,16 @@ export const EmployeeLifeline = () => {
   const handleToggleViewModal = (active: LoanT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS)LifeLine";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("Employee lifeline"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
@@ -106,6 +128,12 @@ export const EmployeeLifeline = () => {
 
       {isOpenModal === "ADD" && (
         <AddEmployeeLifeLine setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "VIEW" && (
+        <ViewEmployeeLifeLine
+          setIsOpenModal={() => handleToggleViewModal("")}
+        />
       )}
     </div>
   );

@@ -70,16 +70,16 @@ export const UsersDetails = () => {
 
   const [allUsers, setAllUsers] = useState<UserType[]>([]);
 
-
   const [selectedValue, setSelectedValue] = useState(10);
 
-  const handleChangeShowData = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeShowData = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedValue(Number(event.target.value));
   };
   const [viewUserDetail, setViewUserDetail] = useState<UserType>(
     {} as UserType
   );
-
 
   const [modalTypeTooPen, setModalTypeTooPen] = useState<
     "ADD" | "UPDATE" | "VIEW" | "CONFIRM PASSWORD" | "DELETE" | ""
@@ -88,6 +88,8 @@ export const UsersDetails = () => {
   const [editUser, setEditUser] = useState<UserType | null>(null);
 
   const handlerGetUsers = async () => {
+    dispatch(navigationStart());
+
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {

@@ -6,22 +6,42 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/AddConfigEmpSalary";
 import { EditConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/EditConfigEmpSalary";
 import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewConfigEmpSalary";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 10];
 
 type CONFIGT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 export const ConfigEmpSalary = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
 
   const handleToggleViewModal = (active: CONFIGT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) CONFIG SALARY";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("CONFIG SALARY"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">

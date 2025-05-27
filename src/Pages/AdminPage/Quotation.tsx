@@ -4,15 +4,25 @@ import { TableInputField } from "../../Components/TableLayoutComponents/TableInp
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
 type QuotationT = "ADD" | "VIEW" | "EDIT" | "";
 export const Quotation = () => {
+  const { loader } = useAppSelector((state) => state.NavigateSate);
+
+  const dispatch = useAppDispatch();
+
   const [isOpenModal, setIsOpenModal] = useState<QuotationT>("");
 
   const [pageNo, setPageNo] = useState(1);
@@ -34,6 +44,16 @@ export const Quotation = () => {
   const handleToggleViewModal = (active: QuotationT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
+
+  useEffect(() => {
+    document.title = "(OMS) QUOTATION";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("QUOTATION"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
