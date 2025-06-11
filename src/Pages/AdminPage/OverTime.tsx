@@ -4,7 +4,6 @@ import { TableInputField } from "../../Components/TableLayoutComponents/TableInp
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { useEffect, useState } from "react";
-import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
@@ -14,6 +13,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { AddOverTime } from "../../Components/OvertimeModals/AddOvertime";
 
 const numbers = [10, 25, 50, 100];
 
@@ -93,7 +93,6 @@ export const OverTime = () => {
             <span className="p-2  ">Employee Name</span>
             <span className="p-2">Date</span>
             <span className="p-2 ">Over Time</span>
-
             <span className="p-2 ">Approval</span>
             <span className="p-2 ">Actions</span>
           </div>
@@ -127,7 +126,7 @@ export const OverTime = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddQuotation setModal={() => handleToggleViewModal("")} />
+        <AddOverTime setModal={() => handleToggleViewModal("")} />
       )}
       {isOpenModal === "DELETE" && (
         <ConfirmationModal

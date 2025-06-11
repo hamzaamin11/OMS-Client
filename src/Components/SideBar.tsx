@@ -15,6 +15,9 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { RiUserCommunityLine } from "react-icons/ri";
+import { useAppSelector } from "../redux/Hooks";
+import { BASE_URL } from "../Content/URL";
+import axios from "axios";
 type SideBarProps = {
   isOpen: boolean;
 };
@@ -29,6 +32,7 @@ type TActivButton =
   | "manageExpense"
   | "Chat"
   | "payroll"
+  | "Assets Management"
   | "Recuritment"
   | "Dynamic"
   | "configureTime"
@@ -36,6 +40,12 @@ type TActivButton =
   | "Reports";
 export const SideBar = ({ isOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
+
+  const [allTodos, setAllTodos] = useState([]);
+
+  const { currentUser } = useAppSelector((state) => state?.officeState);
+
+  const token = currentUser?.token;
 
   const navigate = useNavigate();
 
@@ -47,11 +57,29 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     setActiveBtns((prev) => (prev === activeBtn ? "" : activeBtn));
   };
 
+  const getAllTodos = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getTodos`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllTodos(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) setActiveBtns("");
     setActiveBtns("Dashboard");
     navigate("/");
   }, [isOpen]);
+
+  useEffect(() => {
+    getAllTodos();
+  }, []);
 
   return (
     <div
@@ -120,6 +148,15 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 to={"/customers"}
               >
                 Customer
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/supplier" && "bg-indigo-200"
+                } `}
+                to={"/supplier"}
+              >
+                Suppliers
               </Link>
             </div>
           </AccordionItem>
@@ -254,12 +291,17 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
               <Link
-                className={`my-button ${
+                className={`my-button flex items-center justify-between ${
                   pathname === "/todo" && "bg-indigo-200"
                 } `}
                 to={"/todo"}
               >
-                Todo
+                <span className=""> Todo </span>{" "}
+                {allTodos.length > 0 ? (
+                  <span className="text-left font-bold text-gray-800 bg-indigo-500 rounded p-1">
+                    {allTodos.length}
+                  </span>
+                ) : null}
               </Link>
               <Link
                 className={`my-button ${
@@ -402,7 +444,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 } `}
                 to={"/applyLoan"}
               >
-                Loan
+                Apply Loan
               </Link>
 
               <Link
@@ -412,6 +454,40 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 to={"/configEmployeeSalaries"}
               >
                 Config Employee Salaries
+              </Link>
+            </ul>
+          </AccordionItem>
+        )}
+      </div>
+
+      <SideBarButton
+        isOpen={isOpen}
+        icon={<CiCreditCard1 size={20} />}
+        title={"Assets Mangement"}
+        arrowIcon={<BiArrowBack />}
+        handlerClick={() => toggleButtonActive("Assets Management")}
+        activeBtns={activeBtns}
+        activeBtn="Assets Management"
+      />
+      <div>
+        {activeBtns === "Assets Management" && (
+          <AccordionItem isOpen={isOpen}>
+            <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/calendar" && "bg-indigo-200"
+                } `}
+                to={"/assetsCategory"}
+              >
+                Asset Category
+              </Link>
+              <Link
+                className={`my-button ${
+                  pathname === "/salaryCycle" && "bg-indigo-200"
+                } `}
+                to={"/assets"}
+              >
+                Assets
               </Link>
             </ul>
           </AccordionItem>
@@ -544,6 +620,42 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 to={"/employeeAccount"}
               >
                 Employee Account
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/customerAccount" && "bg-indigo-200"
+                } `}
+                to={"/customerAccount"}
+              >
+                Customer Account
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/customerPayment" && "bg-indigo-200"
+                } `}
+                to={"/customerPayment"}
+              >
+                Customer Payment
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/supplierAccount" && "bg-indigo-200"
+                } `}
+                to={"/supplierAccount"}
+              >
+                Supplier Account
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/supplierPayment" && "bg-indigo-200"
+                } `}
+                to={"/supplierPayment"}
+              >
+                Supplier Payment
               </Link>
             </ul>
           </AccordionItem>

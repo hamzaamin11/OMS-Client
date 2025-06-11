@@ -27,6 +27,14 @@ type SeleteProjectT = {
   projectName: string;
 };
 
+type AddProgressType = {
+  employeeId?: string;
+  project?: string;
+  date?: string;
+  note?: string;
+  [key: string]: string | undefined;
+};
+
 const initialState = {
   employeeId: "",
   project: "",
@@ -39,14 +47,15 @@ export const AddProgress = ({
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addProgress, setAddProgress] = useState(initialState);
+  const isAdmin = currentUser?.role;
+
+  const [addProgress, setAddProgress] = useState<AddProgressType>(initialState);
 
   const [allUsers, setAllUsers] = useState([]);
 
   const [seleteProject, setSeleteProject] = useState<SeleteProjectT[] | null>(
     null
   );
-
 
   const token = currentUser?.token;
 
@@ -59,8 +68,18 @@ export const AddProgress = ({
 
     const { name, value } = e.target;
 
-    setAddProgress({ ...addProgress, [name]: value });
+    if (value === "") {
+      // Agar value empty hai to us property ko remove karo
+      const updatedProgress = { ...addProgress };
+      delete updatedProgress[name];
+      setAddProgress(updatedProgress);
+    } else {
+      // Warna normally set karo
+      setAddProgress({ ...addProgress, [name]: value });
+    }
   };
+
+  console.log("adsdka", addProgress);
 
   const getAllUsers = async () => {
     try {
@@ -126,19 +145,21 @@ export const AddProgress = ({
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Progress</Title>
             <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Employees*"
-                name="employeeId"
-                value={addProgress.employeeId}
-                handlerChange={handlerChange}
-                optionData={allUsers}
-              />
+              {isAdmin === "admin" && (
+                <UserSelect
+                  labelName="Employees*"
+                  name="employeeId"
+                  value={addProgress.employeeId ?? ""}
+                  handlerChange={handlerChange}
+                  optionData={allUsers}
+                />
+              )}
 
               <OptionField
                 labelName="Project"
                 name="project"
                 handlerChange={handlerChange}
-                value={addProgress.project}
+                value={addProgress.project ?? ""}
                 optionData={seleteProject?.map((project) => ({
                   id: project.projectId,
                   label: project.projectName,
@@ -147,18 +168,21 @@ export const AddProgress = ({
                 inital="Please Select Project"
               />
 
-              <InputField
-                labelName="End Date*"
-                name="date"
-                type="date"
-                handlerChange={handlerChange}
-                inputVal={addProgress.date}
-              />
+              {isAdmin === "admin" && (
+                <InputField
+                  labelName="End Date*"
+                  name="date"
+                  type="date"
+                  handlerChange={handlerChange}
+                  inputVal={addProgress.date}
+                />
+              )}
+
               <TextareaField
                 labelName="Note*"
                 name="note"
                 handlerChange={handlerChange}
-                inputVal={addProgress.note}
+                inputVal={addProgress.note ?? ""}
               />
             </div>
 

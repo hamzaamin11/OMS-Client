@@ -2,7 +2,7 @@ import { BiUser } from "react-icons/bi";
 import { FaProjectDiagram } from "react-icons/fa";
 import { LuListTodo } from "react-icons/lu";
 import Card from "./DetailCards/Card";
-import { NewProject } from "./MenuCards/NewProject";
+
 import { WorkingProject } from "./MenuCards/WorkingProject";
 import { CompleteProject } from "./MenuCards/CompleteProject";
 import { useEffect, useState } from "react";
@@ -15,11 +15,59 @@ import { CiViewList } from "react-icons/ci";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
 import { OptionField } from "./InputFields/OptionField";
+import { NewProject } from "./MenuCards/NewProject";
+import { Columns } from "./MenuCards/Colums";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 type CategoryT = {
   id: number;
   categoryName: string;
 };
+
+type Project = {
+  id: number;
+  projectName: string;
+  projectCategory: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  projectStatus: "Y" | "N";
+};
+
+const columsData = [
+  {
+    id: "newProject",
+    title: "New Project",
+  },
+  {
+    id: "working",
+    title: "Working Project",
+  },
+
+  {
+    id: "complete",
+    title: "Complete Project",
+  },
+];
+
+type DummyDataT = {
+  id: string;
+  projectName: string;
+  status: string;
+};
+
+const dummyProjects = [
+  { id: "1", projectName: "Website Redesign", status: "newProject" },
+  { id: "2", projectName: "Marketing Strategy", status: "working" },
+  { id: "3", projectName: "Mobile App Launch", status: "complete" },
+  { id: "4", projectName: "CRM Integration", status: "working" },
+  { id: "5", projectName: "SEO Optimization", status: "newProject" },
+  { id: "6", projectName: "Cloud Migration", status: "complete" },
+  { id: "7", projectName: "Brand Identity Update", status: "working" },
+  { id: "8", projectName: "Internal Tooling", status: "newProject" },
+  { id: "9", projectName: "Sales Automation", status: "complete" },
+  { id: "10", projectName: "Customer Feedback System", status: "newProject" },
+];
 
 export const MainContent = () => {
   const { loader } = useAppSelector((state) => state.NavigateSate);
@@ -36,7 +84,11 @@ export const MainContent = () => {
 
   console.log(formData.categoryName);
 
-  const [allNewProjects, setNewAllProjects] = useState([]);
+  const [allNewProjects, setNewAllProjects] = useState<Project[] | null>(null);
+
+  console.log(allNewProjects, "allnewProject =>");
+
+  console.log("allNewProjects", allNewProjects);
 
   const [allWorkProjects, setAllWorkProjects] = useState([]);
 
@@ -48,7 +100,9 @@ export const MainContent = () => {
 
   const [allExpenses, setAllExpenses] = useState([]);
 
-  console.log(allNewProjects);
+  const [dummyData, setDummyData] = useState<DummyDataT[]>(dummyProjects);
+
+  console.log(dummyData, "123");
 
   const [expenseCategory, setExpenseCategory] = useState([]);
 
@@ -83,6 +137,7 @@ export const MainContent = () => {
         }
       );
       setNewAllProjects(res.data);
+      console.log("=>>>>>>>>>>>>>>>>>new project hit", res.data);
     } catch (error) {
       console.log(error);
     }
@@ -185,6 +240,22 @@ export const MainContent = () => {
 
     setFormData({ ...formData, [name]: value });
   };
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const taskId = active.id as string;
+    const newStatus = over.id as DummyDataT["status"];
+
+    console.log(newStatus, " <=<new Status");
+
+    setDummyData((prevData) =>
+      prevData.map((project) =>
+        project.id === taskId ? { ...project, status: newStatus } : project
+      )
+    );
+  };
 
   useEffect(() => {
     toast.success("Welcome To Technic Mentors(OMS)");
@@ -232,12 +303,23 @@ export const MainContent = () => {
       </form>
 
       <div className="flex justify-between gap-4 mx-4 bg-">
-        <NewProject
+        {/* <NewProject
           allProjects={allNewProjects}
           handlegetNewProjects={handlegetNewProjects}
         />
         <WorkingProject />
-        <CompleteProject />
+        <CompleteProject /> */}
+        <DndContext onDragEnd={handleDragEnd}>
+          {columsData.map((column) => (
+            <Columns
+              key={column.id}
+              colum={column}
+              allProject={dummyData?.filter(
+                (task) => task?.status === column.id
+              )}
+            />
+          ))}
+        </DndContext>
       </div>
       <div className="flex items-center justify-between m-4 ">
         <Card
@@ -247,13 +329,13 @@ export const MainContent = () => {
           icon={<BiUser />}
           style="bg-indigo-500 "
         />
-        <Card
+        {/* <Card
           titleName=" Projects"
           totalUser="TotalProjects"
-          totalNumber={allNewProjects.length}
+          totalNumber={allNewProjects?.length}
           icon={<FaProjectDiagram />}
           style="bg-red-500  "
-        />
+        /> */}
         <Card
           titleName="Assigned Projects"
           totalUser="TotalProjects"

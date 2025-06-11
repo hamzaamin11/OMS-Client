@@ -19,10 +19,16 @@ const initialState = {
 };
 export const Login = () => {
   const { currentUser, error } = useAppSelector((state) => state.officeState);
+
   const { loader } = useAppSelector((state) => state.NavigateSate);
+
   const [formData, setFormData] = useState(initialState);
+
   const [loading, setLoading] = useState(false);
+
   const dispatch = useAppDispatch();
+
+  console.log("loading btn", loading);
 
   useEffect(() => {
     document.title = "(OMS)Login";
@@ -32,8 +38,7 @@ export const Login = () => {
     }, 1000);
   }, []);
 
-  if (currentUser?.role === "admin")
-    return <Navigate to={"/"} />;
+  if (currentUser?.role === "admin") return <Navigate to={"/"} />;
   if (currentUser?.role === "user") return <Navigate to={"/User/dashboard"} />;
 
   if (loader) return <Loader />;
@@ -101,6 +106,7 @@ export const Login = () => {
             handlerChange={handlerChange}
             inputVal={formData.password}
           />
+
           <button
             disabled={loading}
             className="w-full font-serif border rounded-md p-2 bg-indigo-500 text-white cursor-pointer mt-4 hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"

@@ -183,7 +183,7 @@ export const CustomerDetail = () => {
           </div>
           <TableInputField />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
+        <div className="w-full max-h-[28.4rem] overflow-hidden  mx-auto">
           {/* Header Row */}
 
           <div className="grid grid-cols-[0.2fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-600 text-sm">
@@ -206,16 +206,16 @@ export const CustomerDetail = () => {
           )}
           {allCustomers.map((customer, index) => (
             <div
-              className="grid grid-cols-[0.2fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm"
+              className="grid grid-cols-[0.2fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm p-[7px]"
               key={customer.id}
             >
-              <span className=" border-gray-600 p-2">{index + 1}</span>
-              <span className=" p-2 text-left">{customer.customerName}</span>
-              <span className=" p-2 text-left">{customer.customerAddress}</span>
-              <span className=" p-2 text-left">{customer.customerContact}</span>
-              <span className=" p-2 text-left">{customer.companyName}</span>
-              <span className=" p-2 text-left">{customer.companyAddress}</span>
-              <span className="p-2 flex items-center justify-center gap-1 ">
+              <span className=" border-gray-600 ">{index + 1}</span>
+              <span className="  text-left">{customer.customerName}</span>
+              <span className="  text-left">{customer.customerAddress}</span>
+              <span className=" text-left">{customer.customerContact}</span>
+              <span className="  text-left">{customer.companyName}</span>
+              <span className=" text-left">{customer.companyAddress}</span>
+              <span className=" flex items-center justify-center gap-1 ">
                 <EditButton
                   handleUpdate={() => handleUpdateCustomer(customer)}
                 />

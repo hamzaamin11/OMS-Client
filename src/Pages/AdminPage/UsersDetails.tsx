@@ -203,16 +203,16 @@ export const UsersDetails = () => {
 
           {/* Data Rows */}
 
-          {(allUsers.filter((user) => user.loginStatus === "Y")?.length ??
+          {(allUsers?.filter((user) => user.loginStatus === "Y")?.length ??
             0) === 0 ? (
             <div className="text-gray-800 text-lg text-center py-2 ">
               No records available at the moment!
             </div>
           ) : (
             allUsers
-              .filter((user) => user.loginStatus === "Y")
-              .slice(0, selectedValue)
-              .map((user, index) => (
+              ?.filter((user) => user.loginStatus === "Y")
+              ?.slice(0, selectedValue)
+              ?.map((user, index) => (
                 <div
                   className="grid grid-cols-8 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm"
                   key={user.id}

@@ -31,6 +31,8 @@ type ALLASSIGNPROJECTT = {
 export const AssignProjects = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const isAdmin = currentUser?.role;
+
   const { loader } = useAppSelector((state) => state.NavigateSate);
 
   const dispatch = useAppDispatch();
@@ -71,6 +73,7 @@ export const AssignProjects = () => {
   }, []);
 
   if (loader) return <Loader />;
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
@@ -82,10 +85,12 @@ export const AssignProjects = () => {
               [10]
             </span>
           </span>
-          <CustomButton
-            label=" Add Assign Project"
-            handleToggle={() => handleToggleViewModal("ADDPROJECT")}
-          />
+          {isAdmin === "admin" ? (
+            <CustomButton
+              label=" Add Assign Project"
+              handleToggle={() => handleToggleViewModal("ADDPROJECT")}
+            />
+          ) : null}
         </div>
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <div>

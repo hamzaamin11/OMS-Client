@@ -27,7 +27,8 @@ export const AddCustomer = ({
 }: AddCustomerProps) => {
   const [customerData, setCustomerData] = useState(initialState);
   const { currentUser } = useAppSelector((state) => state?.officeState);
-
+  const [loading, setLoading] = useState(false);
+  console.log("btn", loading);
   const token = currentUser?.token;
 
   // const [showTime, setShowTime] = useState("");
@@ -48,6 +49,7 @@ export const AddCustomer = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(
         `${BASE_URL}/admin/addCustomer`,
@@ -59,14 +61,18 @@ export const AddCustomer = ({
         }
       );
       console.log(res.data.message);
-      setIsOpenModal();
       toast.success(res.data.message);
       handleGetAllCustomers();
+      setLoading(false);
+      setIsOpenModal();
+      setCustomerData(initialState);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message || "Something went wrong");
     }
+    setLoading(false);
   };
+
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
@@ -119,7 +125,7 @@ export const AddCustomer = ({
           </div>
           <div className="flex items-center justify-center m-2 gap-2 text-xs ">
             <CancelBtn setModal={() => setIsOpenModal()} />
-            <AddButton label={"Add Customer"} />
+            <AddButton label={"Add Customer"} loading={loading} />
           </div>
         </form>
       </div>

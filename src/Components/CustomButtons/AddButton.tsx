@@ -1,4 +1,5 @@
 import React from "react";
+import { ClipLoader } from "react-spinners";
 
 type ButtonProps<T = void> = {
   label: string;
@@ -20,7 +21,14 @@ export const AddButton = <T,>({
         className="bg-indigo-600 text-white p-2 rounded hover:cursor-pointer hover:scale-105 duration-300"
         onClick={(e) => handleClick && handleClick(e, param)}
       >
-        {label}
+        {loading ? (
+          <div className="flex items-center justify-center gap-2">
+            <span>Loading...</span>
+            <ClipLoader size={18} color="white" />
+          </div>
+        ) : (
+          label
+        )}
       </button>
     </div>
   );

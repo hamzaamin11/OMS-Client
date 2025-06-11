@@ -3,13 +3,15 @@ import { SideBarButton } from "../SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaUserSlash } from "react-icons/fa";
+import { FaMoneyCheck, FaUserSlash } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
 import { LuListTodo } from "react-icons/lu";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { GiProgression } from "react-icons/gi";
+import { RiUserCommunityLine } from "react-icons/ri";
+import { CiCreditCard1 } from "react-icons/ci";
 type SideBarProps = {
   isOpen: boolean;
 };
@@ -19,6 +21,9 @@ type TActivButton =
   | "AssignedProjects"
   | "Progress"
   | "Todo"
+  | "Dynamic"
+  | "payroll"
+  | "salary"
   | "Apply Leave"
   | "Reports";
 export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
@@ -116,6 +121,50 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         </div>
       )}
 
+      <SideBarButton
+        isOpen={isOpen}
+        icon={<CiCreditCard1 size={20} />}
+        title={"Payroll"}
+        arrowIcon={<BiArrowBack />}
+        handlerClick={() => toggleButtonActive("payroll")}
+        activeBtns={activeBtns}
+        activeBtn="payroll"
+      />
+      <div>
+        {activeBtns === "payroll" && (
+          <AccordionItem isOpen={isOpen}>
+            <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/user/overTime" && "bg-indigo-200"
+                } `}
+                to={"/user/overTime"}
+              >
+                Over Time
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/user/advanceSalary" && "bg-indigo-200"
+                } `}
+                to={"/user/advanceSalary"}
+              >
+                Advance Salary
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/user/applyLoan" && "bg-indigo-200"
+                } `}
+                to={"/user/applyLoan"}
+              >
+                Apply Loan
+              </Link>
+            </ul>
+          </AccordionItem>
+        )}
+      </div>
+
       {!isOpen ? (
         <Link
           to={"/users/assignedprojects"}
@@ -164,6 +213,29 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
 
       {!isOpen ? (
         <Link
+          to={"/user/salarydetail"}
+          onClick={() => setActiveBtns("salary")}
+          className={`flex items-center ${
+            isOpen && "justify-between "
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "salary" && "bg-indigo-500 text-white"
+          } `}
+        >
+          <FaMoneyCheck size={20} />
+          <p className="text-xs">Salary</p>
+        </Link>
+      ) : (
+        <div
+          className={`flex items-center ${
+            isOpen && "justify-between "
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+        >
+          <FaMoneyCheck size={20} />
+        </div>
+      )}
+
+      {!isOpen ? (
+        <Link
           to={"/users/progress"}
           onClick={() => setActiveBtns("Progress")}
           className={`flex items-center ${
@@ -184,6 +256,51 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           <GiProgression size={20} />
         </div>
       )}
+
+      <SideBarButton
+        isOpen={isOpen}
+        icon={<RiUserCommunityLine size={20} />}
+        title={"Dynamic"}
+        arrowIcon={<BiArrowBack />}
+        handlerClick={() => toggleButtonActive("Dynamic")}
+        activeBtns={activeBtns}
+        activeBtn="Dynamic"
+      />
+
+      <div>
+        {activeBtns === "Dynamic" && (
+          <AccordionItem isOpen={isOpen}>
+            <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/user/promotion" && "bg-indigo-200"
+                } `}
+                to={"/user/promotion"}
+              >
+                Promotion Request
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/user/resignation" && "bg-indigo-200"
+                } `}
+                to={"/user/resignation"}
+              >
+                Resignation Request
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/user/rejoin" && "bg-indigo-200"
+                } `}
+                to={"/user/rejoin"}
+              >
+                Rejoin Request
+              </Link>
+            </ul>
+          </AccordionItem>
+        )}
+      </div>
 
       <SideBarButton
         isOpen={isOpen}

@@ -18,7 +18,6 @@ const currentDate =
   new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
 
 const reasonLeaveOption = [
- 
   {
     id: 1,
     label: "Present",
@@ -52,6 +51,8 @@ export const AddAttendance = ({
 
   const [allUsers, setAllUsers] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -77,6 +78,7 @@ export const AddAttendance = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(
         `${BASE_URL}/admin/addAttendance/${addUserAttendance?.selectUser}`,
@@ -91,8 +93,11 @@ export const AddAttendance = ({
       console.log(res.data);
       setModal();
       handleGetALLattendance();
+      setLoading(false);
+      toast.success("Attendance has been added successfully");
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message || "Something went wrong");
     }
   };
   useEffect(() => {
@@ -150,7 +155,7 @@ export const AddAttendance = ({
             </div>
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">
               <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Attendance"} />
+              <AddButton label={"Save Attendance"} loading={loading} />
             </div>
           </form>
         </div>

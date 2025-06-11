@@ -5,7 +5,6 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { useEffect, useState } from "react";
-import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -14,6 +13,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { AddAdvanceSalary } from "../../Components/AdvanceSalaryModal/AddAdvanceSalary";
 
 const numbers = [10, 25, 50, 100];
 
@@ -57,7 +57,7 @@ export const AdvanceSalary = () => {
 
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Advance Salary" activeFile="All Quotation list" />
+      <TableTitle tileName="Advance Salary" activeFile="Advance Salary list" />
       <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
@@ -67,7 +67,7 @@ export const AdvanceSalary = () => {
             </span>
           </span>
           <CustomButton
-            label="Advance Salry"
+            label="Advance Salary"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
@@ -123,7 +123,7 @@ export const AdvanceSalary = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddQuotation setModal={() => handleToggleViewModal("")} />
+        <AddAdvanceSalary setModal={() => handleToggleViewModal("")} />
       )}
       {isOpenModal === "EDIT" && (
         <EditQuotation setModal={() => handleToggleViewModal("")} />

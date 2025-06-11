@@ -44,6 +44,15 @@ import { EmployeeLifeline } from "./Pages/AdminPage/EmployeeLifeline";
 import { Promotion } from "./Pages/AdminPage/Promotion";
 import { Resignation } from "./Pages/AdminPage/Resignation";
 import { Rejoin } from "./Pages/AdminPage/Rejoin";
+import { EmployeeProfile } from "./Pages/AdminPage/EmployeeProfile";
+import { EmployeeSalaryDetail } from "./Pages/AdminPage/EmployeeSalaryDetail";
+import { AssetCategory } from "./Pages/AdminPage/AssetCategory";
+import { Assets } from "./Pages/AdminPage/Assets";
+import { Suppliers } from "./Pages/AdminPage/Suppliers";
+import { SupplierPayment } from "./Pages/AdminPage/SupplierPayment";
+import { CustomerPayment } from "./Pages/AdminPage/CustomerPayment";
+import { CustomerAccount } from "./Pages/AdminPage/CustomerAccount";
+import { SupplierAccount } from "./Pages/AdminPage/SupplierAccount";
 
 function App() {
   return (
@@ -77,6 +86,15 @@ function App() {
               <PrivateLayout>
                 <Profile />
               </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/user/profile"
+            element={
+              <EmployeePrivateLayout>
+                <EmployeeProfile />
+              </EmployeePrivateLayout>
             }
           />
 
@@ -116,11 +134,38 @@ function App() {
           />
 
           <Route
+            path="/user/promotion"
+            element={
+              <EmployeePrivateLayout>
+                <Promotion />
+              </EmployeePrivateLayout>
+            }
+          />
+
+          <Route
+            path="/user/resignation"
+            element={
+              <EmployeePrivateLayout>
+                <Resignation />
+              </EmployeePrivateLayout>
+            }
+          />
+
+          <Route
             path="/resignation"
             element={
               <PrivateLayout>
                 <Resignation />
               </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/user/rejoin"
+            element={
+              <EmployeePrivateLayout>
+                <Rejoin />
+              </EmployeePrivateLayout>
             }
           />
 
@@ -138,6 +183,78 @@ function App() {
             element={
               <PrivateLayout>
                 <MarkAttendance />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/assetsCategory"
+            element={
+              <PrivateLayout>
+                <AssetCategory />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/assets"
+            element={
+              <PrivateLayout>
+                <Assets />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/supplier"
+            element={
+              <PrivateLayout>
+                <Suppliers />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/supplierPayment"
+            element={
+              <PrivateLayout>
+                <SupplierPayment />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/customerPayment"
+            element={
+              <PrivateLayout>
+                <CustomerPayment />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/customerPayment"
+            element={
+              <PrivateLayout>
+                <CustomerPayment />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/customerAccount"
+            element={
+              <PrivateLayout>
+                <CustomerAccount />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/supplierAccount"
+            element={
+              <PrivateLayout>
+                <SupplierAccount />
               </PrivateLayout>
             }
           />
@@ -322,15 +439,6 @@ function App() {
           />
 
           <Route
-            path="/applyLoan"
-            element={
-              <PrivateLayout>
-                <Loan />
-              </PrivateLayout>
-            }
-          />
-
-          <Route
             path="/advanceSalary"
             element={
               <PrivateLayout>
@@ -340,11 +448,63 @@ function App() {
           />
 
           <Route
+            path="/applyLoan"
+            element={
+              <PrivateLayout>
+                <Loan />
+              </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/user/applyLoan"
+            element={
+              <EmployeePrivateLayout>
+                <Loan />
+              </EmployeePrivateLayout>
+            }
+          />
+          <Route
+            path="/user/applyLoan"
+            element={
+              <EmployeePrivateLayout>
+                <Loan />
+              </EmployeePrivateLayout>
+            }
+          />
+          <Route
+            path="/user/salarydetail"
+            element={
+              <EmployeePrivateLayout>
+                <EmployeeSalaryDetail />
+              </EmployeePrivateLayout>
+            }
+          />
+
+          <Route
+            path="/user/advanceSalary"
+            element={
+              <EmployeePrivateLayout>
+                <AdvanceSalary />
+              </EmployeePrivateLayout>
+            }
+          />
+
+          <Route
             path="/overTime"
             element={
               <PrivateLayout>
                 <OverTime />
               </PrivateLayout>
+            }
+          />
+
+          <Route
+            path="/user/overTime"
+            element={
+              <EmployeePrivateLayout>
+                <OverTime />
+              </EmployeePrivateLayout>
             }
           />
           <Route

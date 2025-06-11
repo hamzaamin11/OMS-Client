@@ -35,7 +35,7 @@ export const AddHoliday = ({
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setHoliday({ ...holiday, [name]: value.trim() });
+    setHoliday({ ...holiday, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent) => {

@@ -21,6 +21,7 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 type ALLTODOT = {
   id: number;
   name: string;
+  employeeId: number;
   employeeName: string;
   task: string;
   note: string;
@@ -102,6 +103,7 @@ export const Todo = () => {
         }
       );
       console.log(res.data);
+      getAllTodos();
     } catch (error) {
       console.log(error);
     }
@@ -174,7 +176,7 @@ export const Todo = () => {
                 <EditButton handleUpdate={() => handleClickEditButton(todo)} />
 
                 <DeleteButton
-                  handleDelete={() => hanleClickDeleteButton(todo.id)}
+                  handleDelete={() => hanleClickDeleteButton(todo.employeeId)}
                 />
               </span>
             </div>
